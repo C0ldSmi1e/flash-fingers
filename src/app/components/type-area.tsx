@@ -36,17 +36,17 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
     }
   }, [session.isCompleted, onRestart]);
 
-  const calculatePerformance = (): Performance => {
+  const calculatePerformance = (typedText: string): Performance => {
     const totalTime = (Date.now() - session.startTime.getTime()) / 1000;
-    const correctChars = session.content.text.split("").slice(0, input.currentText.length).filter(
-      (char, index) => char === input.currentText[index]
+    const correctChars = session.content.text.split("").filter(
+      (char, index) => char === typedText[index]
     ).length;
     const accuracy = Math.round((correctChars / session.content.text.length) * 100);
     const wordsTyped = correctChars / 5; // Standard: 5 characters per word
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
 
     return {
-      typedCount: input.currentText.length,
+      typedCount: typedText.length,
       charCount: correctChars,
       wordCount: Math.floor(wordsTyped),
       totalTime,
@@ -68,7 +68,7 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
     if (newText.length === session.content.text.length) {
       const isComplete = session.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
-        const finalPerformance = calculatePerformance();
+        const finalPerformance = calculatePerformance(newText);
         onCompletion(finalPerformance);
       }
     }
