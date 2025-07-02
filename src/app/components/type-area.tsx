@@ -1,22 +1,20 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { Content } from "@/types/content";
 import { Input } from "@/types/input";
-import { TypingSession, Performance } from "@/types/performance";
+import { Session } from "@/types/session";
+import { Performance } from "@/types/performance";
 
 interface TypeAreaProps {
-  content: Content;
+  session: Session;
   input: Input;
   setInput: (input: Input) => void;
-  session: TypingSession;
-  performance: Performance | null;
   onTypingStart: () => void;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
 }
 
-const TypeArea = ({ content, input, setInput, session, performance, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
+const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -39,11 +37,11 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
   }, [session.isCompleted, onRestart]);
 
   const calculatePerformance = (): Performance => {
-    const totalTime = session.startTime ? (Date.now() - session.startTime) / 1000 : 0;
-    const correctChars = content.text.split("").slice(0, input.currentText.length).filter(
+    const totalTime = (Date.now() - session.startTime.getTime()) / 1000;
+    const correctChars = session.content.text.split("").slice(0, input.currentText.length).filter(
       (char, index) => char === input.currentText[index]
     ).length;
-    const accuracy = Math.round((correctChars / content.text.length) * 100);
+    const accuracy = Math.round((correctChars / session.content.text.length) * 100);
     const wordsTyped = correctChars / 5; // Standard: 5 characters per word
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
 
@@ -67,8 +65,8 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
     setInput({ ...input, currentText: newText });
 
     // Check for completion
-    if (newText.length === content.text.length) {
-      const isComplete = content.text.split("").every((char, index) => char === newText[index]);
+    if (newText.length === session.content.text.length) {
+      const isComplete = session.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
         const finalPerformance = calculatePerformance();
         onCompletion(finalPerformance);
@@ -77,7 +75,7 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
   };
 
   const renderTypingText = () => {
-    return content.text.split("").map((char, index) => {
+    return session.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
       
       if (index < input.currentText.length) {
@@ -102,7 +100,7 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
   };
 
   const renderResultsScreen = () => {
-    if (!performance) return null;
+    if (!session.performance) return null;
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -113,23 +111,19 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
           <div className="space-y-4 mb-6">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">⏱️ Time:</span>
-              <span className="font-semibold">{performance.totalTime.toFixed(1)}s</span>
+              <span className="font-semibold">{session.performance.totalTime.toFixed(1)}s</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">🎯 Accuracy:</span>
-              <span className="font-semibold">{performance.accuracy}%</span>
+              <span className="font-semibold">{session.performance.accuracy}%</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">⚡ Speed:</span>
-              <span className="font-semibold">{performance.wpm} WPM</span>
+              <span className="font-semibold">{session.performance.wpm} WPM</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">📊 Characters:</span>
-              <span className="font-semibold">{performance.charCount}/{content.text.length}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">🏆 Round:</span>
-              <span className="font-semibold">#{session.roundCount}</span>
+              <span className="font-semibold">{session.performance.charCount}/{session.content.text.length}</span>
             </div>
           </div>
           
@@ -143,8 +137,8 @@ const TypeArea = ({ content, input, setInput, session, performance, onTypingStar
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
-      <div className="w-full text-3xl leading-relaxed font-mono">
-        <div className="w-full min-h-[200px]">
+      <div className="w-full text-3xl leading-relaxed font-mono break-words">
+        <div className="w-full min-h-[200px] whitespace-pre-wrap">
           {renderTypingText()}
         </div>
       </div>

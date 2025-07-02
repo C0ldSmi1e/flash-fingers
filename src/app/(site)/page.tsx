@@ -2,31 +2,33 @@
 
 import { useState, useEffect } from "react";
 import { getContent } from "@/app/actions/client/get-content";
-import { Content } from "@/types/content";
 import { Input } from "@/types/input";
-import { TypingSession, Performance } from "@/types/performance";
+import { Session } from "@/types/session";
+import { Performance } from "@/types/performance";
 import { TypeArea } from "@/app/components/type-area";
 
 const HomePage = () => {
-  const [content, setContent] = useState<Content | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [input, setInput] = useState<Input>({
     currentText: "",
     typedCount: 0,
     wordCount: 0,
   });
-  const [session, setSession] = useState<TypingSession>({
-    startTime: null,
-    isCompleted: false,
-    roundCount: 0,
-  });
-  const [performance, setPerformance] = useState<Performance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchNewContent = async () => {
+  const createNewSession = async () => {
     try {
       setIsLoading(true);
-      const newContent = await getContent();
-      setContent(newContent);
+      const content = await getContent();
+      const newSession: Session = {
+        id: crypto.randomUUID(),
+        startTime: new Date(),
+        endTime: null,
+        isCompleted: false,
+        performance: null,
+        content,
+      };
+      setSession(newSession);
     } catch (error) {
       console.error(error);
     } finally {
@@ -35,25 +37,27 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    fetchNewContent();
+    createNewSession();
   }, []);
 
   const handleTypingStart = () => {
-    if (!session.startTime) {
-      setSession(prev => ({
+    if (session && !session.startTime) {
+      setSession(prev => prev ? ({
         ...prev,
-        startTime: Date.now(),
-      }));
+        startTime: new Date(),
+      }) : null);
     }
   };
 
   const handleCompletion = (finalPerformance: Performance) => {
-    setPerformance(finalPerformance);
-    setSession(prev => ({
-      ...prev,
-      isCompleted: true,
-      roundCount: prev.roundCount + 1,
-    }));
+    if (session) {
+      setSession(prev => prev ? ({
+        ...prev,
+        endTime: new Date(),
+        isCompleted: true,
+        performance: finalPerformance,
+      }) : null);
+    }
   };
 
   const handleRestart = () => {
@@ -62,31 +66,23 @@ const HomePage = () => {
       typedCount: 0,
       wordCount: 0,
     });
-    setSession({
-      startTime: null,
-      isCompleted: false,
-      roundCount: session.roundCount,
-    });
-    setPerformance(null);
-    fetchNewContent();
+    createNewSession();
   };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!content) {
-    return <div>No content found</div>;
+  if (!session) {
+    return <div>No session found</div>;
   }
 
   return (
     <div className="w-full flex flex-col items-center justify-center h-screen">
       <TypeArea 
-        content={content} 
+        session={session}
         input={input} 
         setInput={setInput}
-        session={session}
-        performance={performance}
         onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}

@@ -1,7 +1,7 @@
 import { Content } from "@/types/content";
 import { Performance } from "@/types/performance";
 
-interface Record {
+interface Session {
   id: string;
   startTime: Date;
   endTime: Date | null;
@@ -10,4 +10,4 @@ interface Record {
   content: Content;
 }
 
-export type { Record };
+export type { Session };

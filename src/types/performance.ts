@@ -7,10 +7,4 @@ interface Performance {
   accuracy: number;
 }
 
-interface TypingSession {
-  startTime: number | null;
-  isCompleted: boolean;
-  roundCount: number;
-}
-
-export type { Performance, TypingSession };
+export type { Performance };
