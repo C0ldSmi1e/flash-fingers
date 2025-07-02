@@ -75,12 +75,15 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
   };
 
   const renderTypingText = () => {
+    const firstMismatchIndex = session.content.text
+      .split("")
+      .findIndex((char, i) => i < input.currentText.length && char !== input.currentText[i]);
+    
     return session.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
       
       if (index < input.currentText.length) {
-        const isCorrect = input.currentText[index] === char;
-        if (isCorrect) {
+        if (firstMismatchIndex === -1 || index < firstMismatchIndex) {
           className += " text-green-600";
         } else {
           className += " text-red-500";
