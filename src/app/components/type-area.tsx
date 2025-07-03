@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Input } from "@/types/input";
 import { Round } from "@/types/round";
 import { Progress } from "@/types/progress";
@@ -18,6 +18,8 @@ interface TypeAreaProps {
 
 const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [, forceUpdate] = useState({});
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -28,6 +30,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       if (round.isCompleted) {
         e.preventDefault();
         e.stopPropagation();
+        setIsTyping(false);
         onRestart();
       }
     };
@@ -37,6 +40,55 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       return () => window.removeEventListener("keydown", handleKeyPress, true);
     }
   }, [round.isCompleted, onRestart]);
+
+  // Auto-update progress bar smoothly
+  useEffect(() => {
+    if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      forceUpdate({}); // Force re-render to update progress bar
+    }, 100); // Update every 100ms for smooth animation
+
+    return () => clearInterval(interval);
+  }, [isTyping, round.isCompleted, gameProgress]);
+
+
+  // Progress bar component
+  const renderProgressBar = () => {
+    // Only show if game exists and user has a best WPM to chase
+    if (!gameProgress || gameProgress.bestWpm === 0 || !isTyping) {
+      return null;
+    }
+
+    const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
+    const totalChars = round.content.text.length;
+    
+    // Calculate where the "best pace" should be at this time
+    const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, totalChars);
+    const bestPacePercentage = (bestPaceChars / totalChars) * 100;
+    
+    return (
+      <div className="w-full mt-4">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-gray-700">
+            Chase Your Best: {gameProgress.bestWpm} WPM
+          </span>
+          <span className="text-xs text-gray-500">
+            Best Pace: {Math.floor(bestPaceChars)}/{totalChars} chars
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-4">
+          {/* Best pace progress bar */}
+          <div 
+            className="h-4 rounded-full transition-all duration-200 bg-red-500"
+            style={{ width: `${Math.min(bestPacePercentage, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+    );
+  };
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
     const totalTime = (Date.now() - round.startTime.getTime()) / 1000;
@@ -117,6 +169,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     
     if (newText.length === 1 && input.currentText.length === 0) {
       onTypingStart();
+      setIsTyping(true);
     }
 
     // Update typedCount - increment only when adding characters (not when deleting)
@@ -132,6 +185,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     if (newText.length === round.content.text.length) {
       const isComplete = round.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
+        setIsTyping(false);
         const finalPerformance = calculatePerformance(newText, newTypedCount);
         onCompletion(finalPerformance);
       }
@@ -245,6 +299,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
           {renderTypingText()}
         </div>
       </div>
+      {renderProgressBar()}
       
       <input
         className="opacity-0 absolute pointer-events-none"
