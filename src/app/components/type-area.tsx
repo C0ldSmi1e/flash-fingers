@@ -24,7 +24,6 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
   const [bestPaceIndex, setBestPaceIndex] = useState(-1);
   const [typingStartTime, setTypingStartTime] = useState<Date | null>(null);
   const [currentTargetWpm, setCurrentTargetWpm] = useState(0);
-  const [leadStatus, setLeadStatus] = useState<"ahead" | "behind" | "tied">("tied");
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -58,14 +57,6 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
       const bestPaceChars = Math.min((currentTime * effectiveWpm * 5) / 60, round.content.text.length);
       setBestPaceIndex(Math.ceil(bestPaceChars));
-      
-      // Update lead status for real-time feedback
-      const currentPosition = input.currentText.length;
-      const leadDifference = currentPosition - Math.ceil(bestPaceChars);
-      
-      if (leadDifference > 2) setLeadStatus("ahead");
-      else if (leadDifference < -2) setLeadStatus("behind");
-      else setLeadStatus("tied");
     }, 50); // Update every 50ms for smoother animation
 
     return () => clearInterval(interval);
