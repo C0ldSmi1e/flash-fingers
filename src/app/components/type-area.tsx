@@ -149,7 +149,7 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
           className += " text-red-500";
         }
       } else if (index === input.currentText.length && !session.isCompleted) {
-        className += " text-gray-900 bg-blue-200 animate-pulse rounded px-0.5";
+        className += " text-gray-900 bg-blue-200 animate-pulse";
       } else {
         className += " text-gray-400";
       }
