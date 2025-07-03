@@ -2,19 +2,21 @@
 
 import { useRef, useEffect } from "react";
 import { Input } from "@/types/input";
-import { Session } from "@/types/session";
+import { Round } from "@/types/round";
+import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
 
 interface TypeAreaProps {
-  session: Session;
+  round: Round;
   input: Input;
   setInput: (input: Input) => void;
+  gameProgress: Progress;
   onTypingStart: () => void;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
 }
 
-const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
+const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -23,25 +25,25 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (session.isCompleted) {
+      if (round.isCompleted) {
         e.preventDefault();
         e.stopPropagation();
         onRestart();
       }
     };
 
-    if (session.isCompleted) {
+    if (round.isCompleted) {
       window.addEventListener("keydown", handleKeyPress, true);
       return () => window.removeEventListener("keydown", handleKeyPress, true);
     }
-  }, [session.isCompleted, onRestart]);
+  }, [round.isCompleted, onRestart]);
 
   const calculatePerformance = (typedText: string): Performance => {
-    const totalTime = (Date.now() - session.startTime.getTime()) / 1000;
-    const correctChars = session.content.text.split("").filter(
+    const totalTime = (Date.now() - round.startTime.getTime()) / 1000;
+    const correctChars = round.content.text.split("").filter(
       (char, index) => char === typedText[index]
     ).length;
-    const accuracy = Math.round((correctChars / session.content.text.length) * 100);
+    const accuracy = Math.round((correctChars / round.content.text.length) * 100);
     const wordsTyped = correctChars / 5; // Standard: 5 characters per word
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
 
@@ -120,8 +122,8 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
     setInput({ ...input, currentText: newText });
 
     // Check for completion
-    if (newText.length === session.content.text.length) {
-      const isComplete = session.content.text.split("").every((char, index) => char === newText[index]);
+    if (newText.length === round.content.text.length) {
+      const isComplete = round.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
         const finalPerformance = calculatePerformance(newText);
         onCompletion(finalPerformance);
@@ -133,13 +135,13 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
     // Find first mismatch by comparing each character directly
     let firstMismatchIndex = -1;
     for (let i = 0; i < input.currentText.length; i++) {
-      if (session.content.text[i] !== input.currentText[i]) {
+      if (round.content.text[i] !== input.currentText[i]) {
         firstMismatchIndex = i;
         break;
       }
     }
     
-    return session.content.text.split("").map((char, index) => {
+    return round.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
       
       if (index < input.currentText.length) {
@@ -148,7 +150,7 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
         } else {
           className += " text-red-500";
         }
-      } else if (index === input.currentText.length && !session.isCompleted) {
+      } else if (index === input.currentText.length && !round.isCompleted) {
         className += " text-gray-900 bg-blue-200 animate-pulse";
       } else {
         className += " text-gray-400";
@@ -163,31 +165,62 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
   };
 
   const renderResultsScreen = () => {
-    if (!session.performance) return null;
+    if (!round.performance) {
+      return null;
+    }
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center animate-in fade-in duration-300">
           <div className="text-4xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Round Complete!</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">Round {gameProgress.totalRounds + 1} Complete!</h2>
           
           <div className="space-y-4 mb-6">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">⏱️ Time:</span>
-              <span className="font-semibold">{session.performance.totalTime.toFixed(1)}s</span>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">This Round</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">⏱️ Time:</span>
+                  <span className="font-semibold">{round.performance.totalTime.toFixed(1)}s</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">🎯 Accuracy:</span>
+                  <span className="font-semibold">{round.performance.accuracy}%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">⚡ Speed:</span>
+                  <span className="font-semibold">{round.performance.wpm} WPM</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">📊 Characters:</span>
+                  <span className="font-semibold">{round.performance.charCount}/{round.content.text.length}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">🎯 Accuracy:</span>
-              <span className="font-semibold">{session.performance.accuracy}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">⚡ Speed:</span>
-              <span className="font-semibold">{session.performance.wpm} WPM</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">📊 Characters:</span>
-              <span className="font-semibold">{session.performance.charCount}/{session.content.text.length}</span>
-            </div>
+            
+            {gameProgress.totalRounds > 0 && (
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="text-sm font-semibold text-blue-700 mb-2">Game Progress</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-600">📈 Avg WPM:</span>
+                    <span className="font-semibold">{gameProgress.averageWpm}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-600">🏆 Best WPM:</span>
+                    <span className="font-semibold">{gameProgress.bestWpm}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-600">🎯 Avg Accuracy:</span>
+                    <span className="font-semibold">{gameProgress.averageAccuracy}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-600">🔥 Total Rounds:</span>
+                    <span className="font-semibold">{gameProgress.totalRounds}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="text-gray-500 text-sm animate-pulse">
@@ -217,12 +250,12 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
         onCopy={handleCopy}
         onContextMenu={handleContextMenu}
         onBlur={() => inputRef.current?.focus()}
-        disabled={session.isCompleted}
+        disabled={round.isCompleted}
         autoComplete="off"
         spellCheck={false}
       />
       
-      {session.isCompleted && renderResultsScreen()}
+      {round.isCompleted && renderResultsScreen()}
     </div>
   );
 };

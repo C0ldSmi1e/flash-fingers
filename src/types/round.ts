@@ -1,7 +1,7 @@
 import { Content } from "@/types/content";
 import { Performance } from "@/types/performance";
 
-interface Session {
+interface Round {
   id: string;
   startTime: Date;
   endTime: Date | null;
@@ -10,4 +10,4 @@ interface Session {
   content: Content;
 }
 
-export type { Session };
+export type { Round };
