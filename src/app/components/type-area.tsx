@@ -61,7 +61,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
 
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
-    const totalTime = (Date.now() - round.startTime.getTime()) / 1000;
+    const totalTime = typingStartTime ? (Date.now() - typingStartTime.getTime()) / 1000 : 0;
     const correctChars = round.content.text.split("").filter(
       (char, index) => char === typedText[index]
     ).length;
