@@ -19,7 +19,7 @@ interface TypeAreaProps {
 const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompletion, onRestart }: TypeAreaProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isTyping, setIsTyping] = useState(false);
-  const [, forceUpdate] = useState({});
+  const [bestPaceIndex, setBestPaceIndex] = useState(-1);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -44,15 +44,18 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
   // Auto-update pace indicator smoothly
   useEffect(() => {
     if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0) {
+      setBestPaceIndex(-1);
       return;
     }
 
     const interval = setInterval(() => {
-      forceUpdate({}); // Force re-render to update pace indicator
-    }, 100); // Update every 100ms for smooth animation
+      const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
+      const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, round.content.text.length);
+      setBestPaceIndex(Math.ceil(bestPaceChars));
+    }, 50); // Update every 50ms for smoother animation
 
     return () => clearInterval(interval);
-  }, [isTyping, round.isCompleted, gameProgress]);
+  }, [isTyping, round.isCompleted, gameProgress, round.startTime, round.content.text.length]);
 
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
@@ -167,13 +170,6 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       }
     }
     
-    // Calculate best pace position if we're chasing a best WPM
-    let bestPaceIndex = -1;
-    if (gameProgress && gameProgress.bestWpm > 0 && isTyping) {
-      const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
-      const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, round.content.text.length);
-      bestPaceIndex = Math.floor(bestPaceChars);
-    }
     
     return round.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
