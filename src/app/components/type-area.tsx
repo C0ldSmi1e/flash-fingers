@@ -38,17 +38,17 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     }
   }, [round.isCompleted, onRestart]);
 
-  const calculatePerformance = (typedText: string): Performance => {
+  const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
     const totalTime = (Date.now() - round.startTime.getTime()) / 1000;
     const correctChars = round.content.text.split("").filter(
       (char, index) => char === typedText[index]
     ).length;
-    const accuracy = Math.round((correctChars / round.content.text.length) * 100);
+    const accuracy = totalTypedCount > 0 ? Math.round((correctChars / totalTypedCount) * 100) : 0;
     const wordsTyped = correctChars / 5; // Standard: 5 characters per word
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
 
     return {
-      typedCount: typedText.length,
+      typedCount: totalTypedCount,
       charCount: correctChars,
       wordCount: Math.floor(wordsTyped),
       totalTime,
@@ -119,13 +119,20 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       onTypingStart();
     }
 
-    setInput({ ...input, currentText: newText });
+    // Update typedCount - increment only when adding characters (not when deleting)
+    const newTypedCount = lengthDiff === 1 ? input.typedCount + 1 : input.typedCount;
+    
+    setInput({ 
+      ...input, 
+      currentText: newText,
+      typedCount: newTypedCount
+    });
 
     // Check for completion
     if (newText.length === round.content.text.length) {
       const isComplete = round.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
-        const finalPerformance = calculatePerformance(newText);
+        const finalPerformance = calculatePerformance(newText, newTypedCount);
         onCompletion(finalPerformance);
       }
     }
