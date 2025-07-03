@@ -75,9 +75,14 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
   };
 
   const renderTypingText = () => {
-    const firstMismatchIndex = session.content.text
-      .split("")
-      .findIndex((char, i) => i < input.currentText.length && char !== input.currentText[i]);
+    // Find first mismatch by comparing each character directly
+    let firstMismatchIndex = -1;
+    for (let i = 0; i < input.currentText.length; i++) {
+      if (session.content.text[i] !== input.currentText[i]) {
+        firstMismatchIndex = i;
+        break;
+      }
+    }
     
     return session.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
