@@ -71,18 +71,10 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     
     return (
       <div className="w-full mt-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            Chase Your Best: {gameProgress.bestWpm} WPM
-          </span>
-          <span className="text-xs text-gray-500">
-            Best Pace: {Math.floor(bestPaceChars)}/{totalChars} chars
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-4">
+        <div className="w-full bg-gray-200 rounded-full h-1">
           {/* Best pace progress bar */}
           <div 
-            className="h-4 rounded-full transition-all duration-200 bg-red-500"
+            className="h-1 rounded-full transition-all duration-200 bg-red-500"
             style={{ width: `${Math.min(bestPacePercentage, 100)}%` }}
           ></div>
         </div>
