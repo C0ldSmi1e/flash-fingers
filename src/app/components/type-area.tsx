@@ -186,6 +186,10 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
           className += " text-green-600";
         } else {
           className += " text-red-500";
+          // Special handling for unmatched spaces - add red background
+          if (char === " ") {
+            className += " bg-red-200";
+          }
         }
       } else if (index === input.currentText.length && !round.isCompleted) {
         className += " text-gray-900 bg-blue-200 animate-pulse";
