@@ -14,15 +14,40 @@ const ResultsModal = ({ round, gameProgress, onRestart }: ResultsModalProps) => 
     return null;
   }
 
+  const { wonAgainstTarget, targetWpm, finalUserPosition, finalTargetPosition } = round.performance;
+  const winnerEmoji = wonAgainstTarget ? "🏆" : "😤";
+  const winnerMessage = wonAgainstTarget ? "You Won!" : "You Lost!";
+  const winnerColor = wonAgainstTarget ? "text-green-600" : "text-red-600";
+  const bgColor = wonAgainstTarget ? "bg-green-50" : "bg-red-50";
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center animate-in fade-in duration-300">
-        <div className="text-4xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Round {gameProgress.totalRounds + 1} Complete!</h2>
+        <div className="text-4xl mb-4">{winnerEmoji}</div>
+        <h2 className={`text-2xl font-bold mb-2 ${winnerColor}`}>{winnerMessage}</h2>
+        <p className="text-gray-600 mb-6">Round {gameProgress.totalRounds + 1} Complete!</p>
         
         <div className="space-y-4 mb-6">
+          <div className={`${bgColor} p-4 rounded-lg border-2 ${wonAgainstTarget ? 'border-green-200' : 'border-red-200'}`}>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Battle Results</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">⚡ Your WPM:</span>
+                <span className="font-semibold">{round.performance.wpm}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">🎯 Target WPM:</span>
+                <span className="font-semibold">{targetWpm.toFixed(1)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">📍 Final Position:</span>
+                <span className="font-semibold">{finalUserPosition} vs {finalTargetPosition}</span>
+              </div>
+            </div>
+          </div>
+          
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">This Round</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Round Stats</h3>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">⏱️ Time:</span>
@@ -31,10 +56,6 @@ const ResultsModal = ({ round, gameProgress, onRestart }: ResultsModalProps) => 
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">🎯 Accuracy:</span>
                 <span className="font-semibold">{round.performance.accuracy}%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">⚡ Speed:</span>
-                <span className="font-semibold">{round.performance.wpm} WPM</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">📊 Characters:</span>

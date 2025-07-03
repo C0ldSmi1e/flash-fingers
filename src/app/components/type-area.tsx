@@ -23,6 +23,8 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
   const [isTyping, setIsTyping] = useState(false);
   const [bestPaceIndex, setBestPaceIndex] = useState(-1);
   const [typingStartTime, setTypingStartTime] = useState<Date | null>(null);
+  const [currentTargetWpm, setCurrentTargetWpm] = useState(0);
+  const [leadStatus, setLeadStatus] = useState<"ahead" | "behind" | "tied">("tied");
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -56,10 +58,18 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
       const bestPaceChars = Math.min((currentTime * effectiveWpm * 5) / 60, round.content.text.length);
       setBestPaceIndex(Math.ceil(bestPaceChars));
+      
+      // Update lead status for real-time feedback
+      const currentPosition = input.currentText.length;
+      const leadDifference = currentPosition - Math.ceil(bestPaceChars);
+      
+      if (leadDifference > 2) setLeadStatus("ahead");
+      else if (leadDifference < -2) setLeadStatus("behind");
+      else setLeadStatus("tied");
     }, 50); // Update every 50ms for smoother animation
 
     return () => clearInterval(interval);
-  }, [isTyping, round.isCompleted, gameProgress, typingStartTime, round.content.text.length]);
+  }, [isTyping, round.isCompleted, gameProgress, typingStartTime, round.content.text.length, input.currentText.length]);
 
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
@@ -71,6 +81,19 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     const wordsTyped = correctChars / 5; // Standard: 5 characters per word
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
 
+    // Determine winner using hybrid approach
+    const wpmDifference = Math.abs(wpm - currentTargetWpm);
+    const isWpmClose = wpmDifference <= 2; // Within 2 WPM considered close
+    
+    let wonAgainstTarget: boolean;
+    if (isWpmClose) {
+      // Tiebreaker: position-based comparison
+      wonAgainstTarget = typedText.length >= bestPaceIndex;
+    } else {
+      // Primary: WPM comparison
+      wonAgainstTarget = wpm > currentTargetWpm;
+    }
+
     return {
       typedCount: totalTypedCount,
       charCount: correctChars,
@@ -78,6 +101,10 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       totalTime,
       wpm,
       accuracy,
+      targetWpm: currentTargetWpm,
+      wonAgainstTarget,
+      finalUserPosition: typedText.length,
+      finalTargetPosition: bestPaceIndex,
     };
   };
 
@@ -87,6 +114,12 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     if (!typingStartTime) {
       setTypingStartTime(new Date());
     }
+    
+    // Set target WPM for this round
+    const targetWpm = gameProgress.averageWpm > 0 
+      ? (gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3) 
+      : 30;
+    setCurrentTargetWpm(targetWpm);
   };
 
   const handleInputChange = (newText: string, lengthDiff: number) => {
