@@ -48,11 +48,13 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       return;
     }
 
-    const effectiveBestWpm = gameProgress.bestWpm > 0 ? gameProgress.bestWpm : 30;
+    const effectiveWpm = gameProgress.averageWpm > 0 
+      ? (gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3) 
+      : 30;
 
     const interval = setInterval(() => {
       const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
-      const bestPaceChars = Math.min((currentTime * effectiveBestWpm * 5) / 60, round.content.text.length);
+      const bestPaceChars = Math.min((currentTime * effectiveWpm * 5) / 60, round.content.text.length);
       setBestPaceIndex(Math.ceil(bestPaceChars));
     }, 50); // Update every 50ms for smoother animation
 
