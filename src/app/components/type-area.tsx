@@ -41,46 +41,19 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     }
   }, [round.isCompleted, onRestart]);
 
-  // Auto-update progress bar smoothly
+  // Auto-update pace indicator smoothly
   useEffect(() => {
     if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0) {
       return;
     }
 
     const interval = setInterval(() => {
-      forceUpdate({}); // Force re-render to update progress bar
+      forceUpdate({}); // Force re-render to update pace indicator
     }, 100); // Update every 100ms for smooth animation
 
     return () => clearInterval(interval);
   }, [isTyping, round.isCompleted, gameProgress]);
 
-
-  // Progress bar component
-  const renderProgressBar = () => {
-    // Only show if game exists and user has a best WPM to chase
-    if (!gameProgress || gameProgress.bestWpm === 0 || !isTyping) {
-      return null;
-    }
-
-    const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
-    const totalChars = round.content.text.length;
-    
-    // Calculate where the "best pace" should be at this time
-    const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, totalChars);
-    const bestPacePercentage = (bestPaceChars / totalChars) * 100;
-    
-    return (
-      <div className="w-full mt-4">
-        <div className="w-full bg-gray-200 rounded-full h-1">
-          {/* Best pace progress bar */}
-          <div 
-            className="h-1 rounded-full transition-all duration-200 bg-red-500"
-            style={{ width: `${Math.min(bestPacePercentage, 100)}%` }}
-          ></div>
-        </div>
-      </div>
-    );
-  };
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
     const totalTime = (Date.now() - round.startTime.getTime()) / 1000;
@@ -194,9 +167,18 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       }
     }
     
+    // Calculate best pace position if we're chasing a best WPM
+    let bestPaceIndex = -1;
+    if (gameProgress && gameProgress.bestWpm > 0 && isTyping) {
+      const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
+      const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, round.content.text.length);
+      bestPaceIndex = Math.floor(bestPaceChars);
+    }
+    
     return round.content.text.split("").map((char, index) => {
       let className = "transition-colors duration-150";
       
+      // User typing status (green for correct, red for incorrect)
       if (index < input.currentText.length) {
         if (firstMismatchIndex === -1 || index < firstMismatchIndex) {
           className += " text-green-600";
@@ -207,6 +189,11 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
         className += " text-gray-900 bg-blue-200 animate-pulse";
       } else {
         className += " text-gray-400";
+      }
+      
+      // Best pace underline - red bottom border for characters up to pace position
+      if (bestPaceIndex >= 0 && index < bestPaceIndex) {
+        className += " border-b-2 border-red-500";
       }
 
       return (
@@ -291,7 +278,6 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
           {renderTypingText()}
         </div>
       </div>
-      {renderProgressBar()}
       
       <input
         className="opacity-0 absolute pointer-events-none"
