@@ -55,8 +55,63 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
     };
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Prevent select all
+    if ((e.ctrlKey || e.metaKey) && e.key === "a") {
+      e.preventDefault();
+      return;
+    }
+    
+    // Prevent word deletion
+    if ((e.ctrlKey || e.metaKey) && (e.key === "Backspace" || e.key === "Delete")) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Prevent undo/redo
+    if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "y")) {
+      e.preventDefault();
+      return;
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+  };
+
+  const handleCopy = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+  };
+
+  const handleContextMenu = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.preventDefault();
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newText = e.target.value;
+    const lengthDiff = newText.length - input.currentText.length;
+    
+    // Only allow single character changes (add one or remove one)
+    if (Math.abs(lengthDiff) > 1) {
+      // Revert to previous state if multiple characters changed
+      e.target.value = input.currentText;
+      return;
+    }
+    
+    // Only allow appending at the end or removing from the end
+    if (lengthDiff === 1) {
+      // Adding one character - must be at the end
+      if (!newText.startsWith(input.currentText)) {
+        e.target.value = input.currentText;
+        return;
+      }
+    } else if (lengthDiff === -1) {
+      // Removing one character - must be from the end
+      if (!input.currentText.startsWith(newText)) {
+        e.target.value = input.currentText;
+        return;
+      }
+    }
     
     if (newText.length === 1 && input.currentText.length === 0) {
       onTypingStart();
@@ -157,8 +212,14 @@ const TypeArea = ({ session, input, setInput, onTypingStart, onCompletion, onRes
         type="text"
         value={input.currentText}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        onCopy={handleCopy}
+        onContextMenu={handleContextMenu}
         onBlur={() => inputRef.current?.focus()}
         disabled={session.isCompleted}
+        autoComplete="off"
+        spellCheck={false}
       />
       
       {session.isCompleted && renderResultsScreen()}
