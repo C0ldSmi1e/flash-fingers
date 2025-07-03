@@ -43,14 +43,16 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
 
   // Auto-update pace indicator smoothly
   useEffect(() => {
-    if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0 || !typingStartTime) {
+    if (!isTyping || round.isCompleted || !gameProgress || !typingStartTime) {
       setBestPaceIndex(-1);
       return;
     }
 
+    const effectiveBestWpm = gameProgress.bestWpm > 0 ? gameProgress.bestWpm : 30;
+
     const interval = setInterval(() => {
       const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
-      const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, round.content.text.length);
+      const bestPaceChars = Math.min((currentTime * effectiveBestWpm * 5) / 60, round.content.text.length);
       setBestPaceIndex(Math.ceil(bestPaceChars));
     }, 50); // Update every 50ms for smoother animation
 
