@@ -20,6 +20,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
   const inputRef = useRef<HTMLInputElement>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [bestPaceIndex, setBestPaceIndex] = useState(-1);
+  const [typingStartTime, setTypingStartTime] = useState<Date | null>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -31,6 +32,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
         e.preventDefault();
         e.stopPropagation();
         setIsTyping(false);
+        setTypingStartTime(null);
         onRestart();
       }
     };
@@ -43,19 +45,19 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
 
   // Auto-update pace indicator smoothly
   useEffect(() => {
-    if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0) {
+    if (!isTyping || round.isCompleted || !gameProgress || gameProgress.bestWpm === 0 || !typingStartTime) {
       setBestPaceIndex(-1);
       return;
     }
 
     const interval = setInterval(() => {
-      const currentTime = (Date.now() - round.startTime.getTime()) / 1000;
+      const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
       const bestPaceChars = Math.min((currentTime * gameProgress.bestWpm * 5) / 60, round.content.text.length);
       setBestPaceIndex(Math.ceil(bestPaceChars));
     }, 50); // Update every 50ms for smoother animation
 
     return () => clearInterval(interval);
-  }, [isTyping, round.isCompleted, gameProgress, round.startTime, round.content.text.length]);
+  }, [isTyping, round.isCompleted, gameProgress, typingStartTime, round.content.text.length]);
 
 
   const calculatePerformance = (typedText: string, totalTypedCount: number): Performance => {
@@ -138,6 +140,9 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
     if (newText.length === 1 && input.currentText.length === 0) {
       onTypingStart();
       setIsTyping(true);
+      if (!typingStartTime) {
+        setTypingStartTime(new Date());
+      }
     }
 
     // Update typedCount - increment only when adding characters (not when deleting)
@@ -154,6 +159,7 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       const isComplete = round.content.text.split("").every((char, index) => char === newText[index]);
       if (isComplete) {
         setIsTyping(false);
+        setTypingStartTime(null);
         const finalPerformance = calculatePerformance(newText, newTypedCount);
         onCompletion(finalPerformance);
       }
