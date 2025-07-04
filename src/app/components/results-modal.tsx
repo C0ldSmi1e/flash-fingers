@@ -14,15 +14,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface ResultsModalProps {
   round: Round;
   gameProgress: Progress;
-  onRestart: () => void;
 }
 
-const ResultsModal = ({ round, gameProgress, onRestart }: ResultsModalProps) => {
+const ResultsModal = ({ round, gameProgress }: ResultsModalProps) => {
   if (!round.performance) {
     return null;
   }
 
-  const { wonAgainstTarget, targetWpm, finalUserPosition, finalTargetPosition } = round.performance;
+  const { wonAgainstTarget, targetWpm } = round.performance;
   const winnerEmoji = wonAgainstTarget ? "🏆" : "😤";
   const winnerMessage = wonAgainstTarget ? "You Won!" : "You Lost!";
   const winnerColor = wonAgainstTarget ? "text-green-600" : "text-red-600";
