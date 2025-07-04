@@ -8,6 +8,9 @@ import { Game } from "@/types/game";
 import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
 import { TypeArea } from "@/app/components/type-area";
+import { SettingsModal } from "@/app/components/settings-modal";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 
 const HomePage = () => {
   const [game, setGame] = useState<Game | null>(null);
@@ -18,6 +21,7 @@ const HomePage = () => {
     wordCount: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const initializeGame = () => {
     const newGame: Game = {
@@ -143,7 +147,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center h-screen">
+    <div className="w-full flex flex-col items-center justify-center h-screen relative">
       <TypeArea 
         round={currentRound}
         input={input} 
@@ -152,6 +156,22 @@ const HomePage = () => {
         onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
+      />
+      
+      {/* Settings Button - Bottom Right */}
+      <Button
+        variant="outline"
+        size="icon"
+        className="cursor-pointer fixed bottom-6 right-6 h-8 w-8 transition-all duration-300 bg-background/80 backdrop-blur-sm"
+        onClick={() => setIsSettingsOpen(true)}
+      >
+        <Settings className="h-5 w-5" />
+      </Button>
+      
+      {/* Settings Modal */}
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
       />
     </div>
   );
