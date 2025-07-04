@@ -70,19 +70,16 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden border-none bg-background">
         <div className="flex h-full min-h-[400px]">
           {/* Left Sidebar - Tabs */}
-          <div className="w-48 border-r border-border pr-4">
+          <div className="w-32 border-r border-border pr-4">
             <nav className="space-y-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
                 
                 return (
                   <Button
                     key={tab.id}
-                    variant={isActive ? "default" : "ghost"}
-                    className={`w-full justify-start gap-3 ${
-                      isActive ? "" : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    variant="ghost"
+                    className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-transparent"
                     onClick={() => setActiveTab(tab.id)}
                   >
                     <Icon className="h-4 w-4" />
