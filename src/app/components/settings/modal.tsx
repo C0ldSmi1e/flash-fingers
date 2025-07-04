@@ -3,10 +3,15 @@
 import { useState } from "react";
 import { 
   Dialog, 
-  DialogContent, 
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Palette, Info } from "lucide-react";
+import { ColorSettings, defaultColors } from "@/types/colors";
+import { ColorSettingsTab } from "./tabs/color-settings-tab";
+import { AboutTab } from "./tabs/about-tab";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -17,6 +22,15 @@ type TabType = "color" | "about";
 
 const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   const [activeTab, setActiveTab] = useState<TabType>("color");
+  const [colors, setColors] = useState<ColorSettings>(defaultColors);
+
+  const updateColor = (key: keyof ColorSettings, value: string) => {
+    setColors(prev => ({ ...prev, [key]: value }));
+  };
+
+  const resetColors = () => {
+    setColors(defaultColors);
+  };
 
   const tabs = [
     { id: "color" as TabType, label: "Color", icon: Palette },
@@ -27,39 +41,14 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     switch (activeTab) {
       case "color":
         return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">🎨 Color Customization</h3>
-              <div className="text-center text-muted-foreground py-8">
-                Color customization options coming soon...
-              </div>
-            </div>
-          </div>
+          <ColorSettingsTab 
+            colors={colors}
+            onColorChange={updateColor}
+            onReset={resetColors}
+          />
         );
       case "about":
-        return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">ℹ️ About Flash Fingers</h3>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <p className="font-medium">Version: 1.0.0</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">
-                    A minimalist typing speed test designed to help you improve your typing skills 
-                    while maintaining focus and flow.
-                  </p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">
-                    Built with Next.js, React, and shadcn/ui for a modern, accessible typing experience.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        return <AboutTab />;
       default:
         return null;
     }
@@ -67,6 +56,9 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogHeader>
+        <DialogTitle></DialogTitle>
+      </DialogHeader>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden border-none bg-background">
         <div className="flex h-full min-h-[400px]">
           {/* Left Sidebar - Tabs */}

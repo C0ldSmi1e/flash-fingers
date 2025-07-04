@@ -8,9 +8,8 @@ import { Game } from "@/types/game";
 import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
 import { TypeArea } from "@/app/components/type-area";
-import { SettingsModal } from "@/app/components/settings-modal";
-import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { SettingsModal } from "@/app/components/settings/modal";
+import { SettingsButton } from "@/app/components/settings/button";
 
 const HomePage = () => {
   const [game, setGame] = useState<Game | null>(null);
@@ -159,14 +158,7 @@ const HomePage = () => {
       />
       
       {/* Settings Button - Bottom Right */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="cursor-pointer fixed bottom-6 right-6 h-8 w-8 transition-all duration-300 bg-background/80 backdrop-blur-sm"
-        onClick={() => setIsSettingsOpen(true)}
-      >
-        <Settings className="h-5 w-5" />
-      </Button>
+      <SettingsButton onClick={() => setIsSettingsOpen(true)} />
       
       {/* Settings Modal */}
       <SettingsModal 
