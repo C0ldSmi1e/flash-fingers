@@ -2,6 +2,14 @@
 
 import { Round } from "@/types/round";
 import { Progress } from "@/types/progress";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ResultsModalProps {
   round: Round;
@@ -18,82 +26,95 @@ const ResultsModal = ({ round, gameProgress, onRestart }: ResultsModalProps) => 
   const winnerEmoji = wonAgainstTarget ? "🏆" : "😤";
   const winnerMessage = wonAgainstTarget ? "You Won!" : "You Lost!";
   const winnerColor = wonAgainstTarget ? "text-green-600" : "text-red-600";
-  const bgColor = wonAgainstTarget ? "bg-green-50" : "bg-red-50";
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center animate-in fade-in duration-300">
-        <div className="text-4xl mb-4">{winnerEmoji}</div>
-        <h2 className={`text-2xl font-bold mb-2 ${winnerColor}`}>{winnerMessage}</h2>
-        <p className="text-gray-600 mb-6">Round {gameProgress.totalRounds + 1} Complete!</p>
+    <Dialog open={true}>
+      <DialogContent className="max-w-md border-none">
+        <DialogHeader>
+          <div className="text-center">
+            <div className="text-4xl mb-4">{winnerEmoji}</div>
+            <DialogTitle className={`text-2xl font-bold mb-2 ${winnerColor}`}>
+              {winnerMessage}
+            </DialogTitle>
+            <p className="text-muted-foreground mb-6">
+              Round {gameProgress.totalRounds + 1} Complete!
+            </p>
+          </div>
+        </DialogHeader>
         
         <div className="space-y-4 mb-6">
-          <div className={`${bgColor} p-4 rounded-lg border-2 ${wonAgainstTarget ? 'border-green-200' : 'border-red-200'}`}>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Battle Results</h3>
-            <div className="space-y-2">
+          <Card className={`border-2 ${wonAgainstTarget ? "border-green-200 bg-green-50/50" : "border-red-200 bg-red-50/50"}`}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                {wonAgainstTarget ? "🏆" : "💪"} Battle Results
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">⚡ Your WPM:</span>
-                <span className="font-semibold">{round.performance.wpm}</span>
+                <span className="text-muted-foreground">⚡ Your WPM:</span>
+                <Badge variant={wonAgainstTarget ? "default" : "secondary"}>
+                  {round.performance.wpm}
+                </Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">🎯 Target WPM:</span>
-                <span className="font-semibold">{targetWpm.toFixed(1)}</span>
+                <span className="text-muted-foreground">🎯 Target WPM:</span>
+                <Badge variant="default">{targetWpm.toFixed(1)}</Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">📍 Final Position:</span>
-                <span className="font-semibold">{finalUserPosition} vs {finalTargetPosition}</span>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Round Stats</h3>
-            <div className="space-y-2">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                📊 Round Stats
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">⏱️ Time:</span>
-                <span className="font-semibold">{round.performance.totalTime.toFixed(1)}s</span>
+                <span className="text-muted-foreground">⏱️ Time:</span>
+                <Badge variant="default">{round.performance.totalTime.toFixed(1)}s</Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">🎯 Accuracy:</span>
-                <span className="font-semibold">{round.performance.accuracy}%</span>
+                <span className="text-muted-foreground">🎯 Accuracy:</span>
+                <Badge variant="default">{round.performance.accuracy}%</Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">📊 Characters:</span>
-                <span className="font-semibold">{round.performance.charCount}/{round.content.text.length}</span>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
           {gameProgress.totalRounds > 0 && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-blue-700 mb-2">Game Progress</h3>
-              <div className="space-y-2">
+            <Card className="border-blue-200 bg-blue-50/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-blue-700">
+                  📈 Game Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600">📈 Avg WPM:</span>
-                  <span className="font-semibold">{gameProgress.averageWpm}</span>
+                  <Badge variant="secondary">{gameProgress.averageWpm}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600">🏆 Best WPM:</span>
-                  <span className="font-semibold">{gameProgress.bestWpm}</span>
+                  <Badge variant="default">{gameProgress.bestWpm}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600">🎯 Avg Accuracy:</span>
-                  <span className="font-semibold">{gameProgress.averageAccuracy}%</span>
+                  <Badge variant="secondary">{gameProgress.averageAccuracy}%</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600">🔥 Total Rounds:</span>
-                  <span className="font-semibold">{gameProgress.totalRounds}</span>
+                  <Badge variant="default">{gameProgress.totalRounds}</Badge>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
         </div>
         
-        <div className="text-gray-500 text-sm animate-pulse">
-          Press any key for next round
+        <div className="text-center animate-pulse">
+            Press any key for next round
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
