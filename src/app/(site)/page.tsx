@@ -159,10 +159,10 @@ const HomePage = () => {
         onCompletion={handleCompletion}
         onRestart={handleRestart}
       />
-      
+        
       {/* Settings Button - Bottom Right */}
       <SettingsButton onClick={() => setIsSettingsOpen(true)} />
-      
+        
       {/* Settings Modal */}
       <SettingsModal 
         isOpen={isSettingsOpen} 

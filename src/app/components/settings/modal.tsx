@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Dialog, 
   DialogContent,
@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Palette, Info } from "lucide-react";
-import { ColorSettings, defaultColors } from "@/types/colors";
+import { useColorPersistence } from "@/hooks/useColorPersistence";
 import { ColorSettingsTab } from "./tabs/color-settings-tab";
 import { AboutTab } from "./tabs/about-tab";
 
@@ -21,31 +21,7 @@ type TabType = "color" | "about";
 
 const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   const [activeTab, setActiveTab] = useState<TabType>("color");
-  const [colors, setColors] = useState<ColorSettings>(defaultColors);
-
-  const updateColor = (key: keyof ColorSettings, value: string) => {
-    setColors(prev => ({ ...prev, [key]: value }));
-  };
-
-  // Apply colors to CSS custom properties
-  useEffect(() => {
-    const root = document.documentElement;
-    Object.entries(colors).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value);
-    });
-  }, [colors]);
-
-  // Initialize default colors on mount
-  useEffect(() => {
-    const root = document.documentElement;
-    Object.entries(defaultColors).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value);
-    });
-  }, []);
-
-  const resetColors = () => {
-    setColors(defaultColors);
-  };
+  const { colors, updateColor, resetColors } = useColorPersistence();
 
   const tabs = [
     { id: "color" as TabType, label: "Color", icon: Palette },
