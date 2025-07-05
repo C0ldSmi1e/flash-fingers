@@ -12,7 +12,7 @@ const SettingsButton = ({ onClick }: SettingsButtonProps) => {
     <Button
       variant="outline"
       size="icon"
-      className="cursor-pointer fixed bottom-6 right-6 h-8 w-8 transition-all duration-300 bg-background/80 backdrop-blur-sm"
+      className="cursor-pointer fixed bottom-6 right-6 h-8 w-8 transition-all duration-300 default-text bg-opacity-100"
       onClick={onClick}
     >
       <Settings className="h-5 w-5" />
