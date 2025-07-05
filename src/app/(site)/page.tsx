@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getContent } from "@/app/actions/client/get-content";
+import { getContent } from "@/actions/client/get-content";
 import { Input } from "@/types/input";
 import { Round } from "@/types/round";
 import { Game } from "@/types/game";
 import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
-import { TypeArea } from "@/app/components/type-area";
-import { SettingsModal } from "@/app/components/settings/modal";
-import { SettingsButton } from "@/app/components/settings/button";
+import { TypeArea } from "@/components/type-area";
+import { SettingsModal } from "@/components/settings/modal";
+import { SettingsButton } from "@/components/settings/button";
 
 const HomePage = () => {
   const [game, setGame] = useState<Game | null>(null);

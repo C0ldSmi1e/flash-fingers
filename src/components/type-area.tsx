@@ -5,9 +5,9 @@ import { Input } from "@/types/input";
 import { Round } from "@/types/round";
 import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
-import { TypingText } from "@/app/components/typing-text";
-import { ResultsModal } from "@/app/components/results-modal";
-import { TypingInput } from "@/app/components/typing-input";
+import { TypingText } from "@/components/typing-text";
+import { ResultsModal } from "@/components/results-modal";
+import { TypingInput } from "@/components/typing-input";
 
 interface TypeAreaProps {
   round: Round;

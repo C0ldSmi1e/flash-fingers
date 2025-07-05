@@ -1,4 +1,4 @@
-import { ColorProvider } from "@/app/providers/color-provider";
+import { ColorProvider } from "@/providers/color-provider";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

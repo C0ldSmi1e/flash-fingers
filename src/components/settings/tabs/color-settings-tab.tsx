@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ColorRow } from "@/app/components/color-row";
+import { ColorRow } from "@/components/color-row";
 import { ColorSettings, colorLabels } from "@/types/colors";
 
 interface ColorSettingsTabProps {
