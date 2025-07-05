@@ -14,7 +14,7 @@ const eslintConfig = [
   {
     "ignores": [
       "src/components/ui/*",
-      "lib/utils.ts"
+      "src/lib/utils.ts"
     ],
     "rules": {
       "indent": [
