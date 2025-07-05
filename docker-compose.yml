@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: flash-fingers:1.0
+    container_name: Flashing-Fingers
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+    env_file:
+      - .env
