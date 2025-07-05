@@ -26,23 +26,23 @@ const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: Typing
           // User typing status (green for correct, red for incorrect)
           if (index < currentText.length) {
             if (firstMismatchIndex === -1 || index < firstMismatchIndex) {
-              className += " text-green-600";
+              className += " correct-text";
             } else {
-              className += " text-red-500";
+              className += " wrong-text";
               // Special handling for unmatched spaces - add red background
               if (char === " ") {
-                className += " bg-red-200";
+                className += " wrong-space";
               }
             }
           } else if (index === currentText.length && !isCompleted) {
-            className += " text-gray-900 bg-blue-200 animate-pulse";
+            className += " cursor-text";
           } else {
-            className += " text-gray-400";
+            className += " default-text";
           }
           
-          // Best pace underline - red bottom border for characters up to pace position
+          // Best pace underline - progress bar color for characters up to pace position
           if (bestPaceIndex >= 0 && index < bestPaceIndex) {
-            className += " border-b-2 border-red-500";
+            className += " progress-underline";
           }
 
           return (

@@ -146,7 +146,10 @@ const HomePage = () => {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center h-screen relative">
+    <div 
+      className="w-full flex flex-col items-center justify-center h-screen relative"
+      style={{ backgroundColor: "var(--color-page-background, #ffffff)" }}
+    >
       <TypeArea 
         round={currentRound}
         input={input} 

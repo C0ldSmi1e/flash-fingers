@@ -148,8 +148,8 @@ const TypeArea = ({ round, input, setInput, gameProgress, onTypingStart, onCompl
       {/* Show prompt before user starts typing */}
       {!isTyping && !round.isCompleted && input.currentText.length === 0 && (
         <div className="mt-6 text-center">
-          <p className="text-muted-foreground text-lg animate-pulse">
-            ✨ Start typing to begin!
+          <p className="default-text text-lg animate-pulse">
+            Start typing to begin!
           </p>
         </div>
       )}

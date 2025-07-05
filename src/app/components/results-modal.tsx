@@ -27,7 +27,7 @@ const ResultsModal = ({ round, gameProgress }: ResultsModalProps) => {
 
   return (
     <Dialog open={true}>
-      <DialogContent className="max-w-md border-none">
+      <DialogContent className="max-w-md border-none bg-gradient-to-r from-white/80 to-[#EAF4FF]/40 backdrop-blur-xs">
         <DialogHeader>
           <div className="text-center">
             <div className="text-4xl mb-4">{winnerEmoji}</div>

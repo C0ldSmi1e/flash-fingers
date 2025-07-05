@@ -4,7 +4,7 @@ const AboutTab = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">ℹ️ About Flash Fingers</h3>
+        <h3 className="text-lg font-semibold mb-4">Flash Fingers</h3>
         <div className="space-y-4 text-sm">
           <div>
             <p className="font-medium">Version: 1.0.0</p>

@@ -20,7 +20,34 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-page-background, var(--background));
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom color classes for typing text */
+.correct-text {
+  color: var(--color-correct-text, #10b981);
+}
+
+.wrong-text {
+  color: var(--color-wrong-text, #ef4444);
+}
+
+.wrong-space {
+  background-color: var(--color-wrong-text, #ef4444);
+  opacity: 0.3;
+}
+
+.default-text {
+  color: var(--color-default-text, #6b7280);
+}
+
+.cursor-text {
+  color: var(--color-interface-text, #374151);
+  background-color: var(--color-cursor, #f59e0b);
+  opacity: 0.7;
+}
+
+.progress-underline {
+  border-bottom: 2px solid var(--color-progress-bar, #3b82f6);
 }

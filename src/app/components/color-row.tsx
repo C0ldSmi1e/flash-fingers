@@ -57,14 +57,14 @@ const ColorRow = ({ label, value, onChange }: ColorRowProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-border last:border-b-0">
+    <div className="flex items-center justify-between">
       {/* Left: Label */}
       <div className="flex-1">
         <span className="text-sm font-medium">{label}</span>
       </div>
       
       {/* Right: Color preview and input */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 overflow-visible">
         {/* Color Preview Circle */}
         <div className="relative" ref={pickerRef}>
           <button
@@ -75,7 +75,7 @@ const ColorRow = ({ label, value, onChange }: ColorRowProps) => {
           
           {/* Color Picker Popup */}
           {isPickerOpen && (
-            <div className="absolute top-10 right-0 z-50 p-3 bg-background border border-border rounded-lg shadow-lg">
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 p-3 bg-background border border-border rounded-lg shadow-xl">
               <HexColorPicker 
                 color={value} 
                 onChange={handleColorPickerChange}
