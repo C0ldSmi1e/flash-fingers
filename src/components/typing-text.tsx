@@ -50,7 +50,7 @@ const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: Typing
   const renderWord = (word: WordData, wordIndex: number) => {
     return word.text.split("").map((char, charIndex) => {
       const globalIndex = word.startIndex + charIndex;
-      let className = "transition-colors duration-150";
+      let className = "transition-colors";
       
       // User typing status (green for correct, red for incorrect)
       if (globalIndex < currentText.length) {
@@ -84,7 +84,7 @@ const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: Typing
 
   return (
     <div className="w-full text-3xl leading-relaxed font-sans">
-      <div className="w-full min-h-[200px] break-words overflow-wrap-anywhere font-mono">
+      <div className="w-full min-h-[200px] break-words whitespace-pre-wrap font-mono">
         {words.map((word, wordIndex) => (
           <span key={wordIndex} className="inline">
             {renderWord(word, wordIndex)}
