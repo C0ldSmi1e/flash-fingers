@@ -8,7 +8,6 @@ interface ColorSettings {
   wrongText: string;
 
   // Interactive Elements
-  progressBar: string;
   cursor: string;
 }
 
@@ -22,7 +21,6 @@ const defaultColors: ColorSettings = {
   wrongText: "#ef4444",
 
   // Interactive Elements
-  progressBar: "#3b82f6",
   cursor: "#f59e0b",
 };
 
@@ -31,7 +29,6 @@ const colorLabels: Record<keyof ColorSettings, string> = {
   defaultText: "Default Text",
   correctText: "Correct Text",
   wrongText: "Wrong Text",
-  progressBar: "Progress Bar",
   cursor: "Cursor",
 };
 

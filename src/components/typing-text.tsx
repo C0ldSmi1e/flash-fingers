@@ -5,7 +5,7 @@ import { useMemo } from "react";
 interface TypingTextProps {
   content: string;
   currentText: string;
-  bestPaceIndex: number;
+  ghostIndex: number;
   isCompleted: boolean;
 }
 
@@ -18,7 +18,7 @@ interface WordData {
 const TypingText = ({
   content,
   currentText,
-  bestPaceIndex,
+  ghostIndex,
   isCompleted,
 }: TypingTextProps) => {
   const words = useMemo(() => {
@@ -71,9 +71,9 @@ const TypingText = ({
         className += " default-text";
       }
 
-      // Best pace underline - progress bar color for characters up to pace position
-      if (bestPaceIndex >= 0 && globalIndex < bestPaceIndex) {
-        className += " progress-underline";
+      // Ghost cursor — shows on the character at the ghost's position
+      if (ghostIndex >= 0 && globalIndex === ghostIndex && globalIndex >= currentText.length && !isCompleted) {
+        className += " ghost-cursor";
       }
 
       return (

@@ -21,6 +21,7 @@ const HomePage = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPersonalBest, setIsPersonalBest] = useState(false);
 
   const initializeGame = () => {
     const newGame: Game = {
@@ -117,6 +118,8 @@ const HomePage = () => {
 
   const handleCompletion = (finalPerformance: Performance) => {
     if (currentRound && game) {
+      setIsPersonalBest(finalPerformance.wpm > game.progress.bestWpm);
+
       const completedRound: Round = {
         ...currentRound,
         endTime: new Date(),
@@ -142,6 +145,7 @@ const HomePage = () => {
   };
 
   const handleRestart = () => {
+    setIsPersonalBest(false);
     setInput({
       currentText: "",
       typedCount: 0,
@@ -177,7 +181,8 @@ const HomePage = () => {
         round={currentRound}
         input={input}
         setInput={setInput}
-        gameProgress={game.progress}
+        bestWpm={game.progress.bestWpm}
+        isPersonalBest={isPersonalBest}
         onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}

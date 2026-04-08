@@ -1,19 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "@/types/input";
 import { Round } from "@/types/round";
-import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
 import { TypingText } from "@/components/typing-text";
-import { ResultsModal } from "@/components/results-modal";
+import { InlineResults } from "@/components/inline-results";
 import { TypingInput } from "@/components/typing-input";
 
 interface TypeAreaProps {
   round: Round;
   input: Input;
   setInput: (input: Input) => void;
-  gameProgress: Progress;
+  bestWpm: number;
+  isPersonalBest: boolean;
   onTypingStart: () => void;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
@@ -23,28 +23,24 @@ const TypeArea = ({
   round,
   input,
   setInput,
-  gameProgress,
+  bestWpm,
+  isPersonalBest,
   onTypingStart,
   onCompletion,
   onRestart,
 }: TypeAreaProps) => {
   const [isTyping, setIsTyping] = useState(false);
-  const [bestPaceIndex, setBestPaceIndex] = useState(-1);
   const [typingStartTime, setTypingStartTime] = useState<Date | null>(null);
-  const [currentTargetWpm, setCurrentTargetWpm] = useState(0);
-
-  const getTargetWpm = useCallback(
-    () =>
-      gameProgress.averageWpm > 0
-        ? gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3
-        : 30,
-    [gameProgress.averageWpm, gameProgress.bestWpm],
-  );
+  const [liveWpm, setLiveWpm] = useState(0);
+  const [ghostIndex, setGhostIndex] = useState(-1);
+  const textLengthRef = useRef(0);
+  textLengthRef.current = input.currentText.length;
 
   const resetTypingState = useCallback(() => {
     setIsTyping(false);
     setTypingStartTime(null);
-    setBestPaceIndex(-1);
+    setLiveWpm(0);
+    setGhostIndex(-1);
   }, []);
 
   useEffect(() => {
@@ -64,30 +60,37 @@ const TypeArea = ({
   }, [round.isCompleted, onRestart, resetTypingState]);
 
   useEffect(() => {
-    if (!isTyping || round.isCompleted || !gameProgress || !typingStartTime) {
+    if (!isTyping || round.isCompleted || !typingStartTime) {
       return;
     }
 
-    const effectiveWpm = getTargetWpm();
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - typingStartTime.getTime()) / 1000;
+      if (elapsed > 0.5) {
+        setLiveWpm(Math.round((textLengthRef.current / 5 / elapsed) * 60));
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isTyping, round.isCompleted, typingStartTime]);
+
+  // Ghost cursor — moves through text at your personal best pace
+  useEffect(() => {
+    if (!isTyping || round.isCompleted || !typingStartTime || bestWpm <= 0) {
+      return;
+    }
 
     const interval = setInterval(() => {
-      const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
-      const bestPaceChars = Math.min(
-        (currentTime * effectiveWpm * 5) / 60,
+      const elapsed = (Date.now() - typingStartTime.getTime()) / 1000;
+      const ghostChars = Math.min(
+        Math.ceil((elapsed * bestWpm * 5) / 60),
         round.content.text.length,
       );
-      setBestPaceIndex(Math.ceil(bestPaceChars));
+      setGhostIndex(ghostChars);
     }, 50);
 
     return () => clearInterval(interval);
-  }, [
-    isTyping,
-    round.isCompleted,
-    gameProgress,
-    typingStartTime,
-    round.content.text.length,
-    getTargetWpm,
-  ]);
+  }, [isTyping, round.isCompleted, typingStartTime, bestWpm, round.content.text.length]);
 
   const calculatePerformance = (
     typedText: string,
@@ -101,21 +104,8 @@ const TypeArea = ({
       .filter((char, index) => char === typedText[index]).length;
     const accuracy =
       totalTypedCount > 0 ? Math.round((correctChars / totalTypedCount) * 100) : 0;
-    const wordsTyped = correctChars / 5; // Standard: 5 characters per word
+    const wordsTyped = correctChars / 5;
     const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
-
-    // Determine winner using hybrid approach
-    const wpmDifference = Math.abs(wpm - currentTargetWpm);
-    const isWpmClose = wpmDifference <= 2; // Within 2 WPM considered close
-
-    let wonAgainstTarget: boolean;
-    if (isWpmClose) {
-      // Tiebreaker: position-based comparison
-      wonAgainstTarget = typedText.length >= bestPaceIndex;
-    } else {
-      // Primary: WPM comparison
-      wonAgainstTarget = wpm > currentTargetWpm;
-    }
 
     return {
       typedCount: totalTypedCount,
@@ -124,10 +114,6 @@ const TypeArea = ({
       totalTime,
       wpm,
       accuracy,
-      targetWpm: currentTargetWpm,
-      wonAgainstTarget,
-      finalUserPosition: typedText.length,
-      finalTargetPosition: bestPaceIndex,
     };
   };
 
@@ -137,8 +123,6 @@ const TypeArea = ({
     if (!typingStartTime) {
       setTypingStartTime(new Date());
     }
-
-    setCurrentTargetWpm(getTargetWpm());
   };
 
   const handleInputChange = (newText: string, lengthDiff: number) => {
@@ -162,7 +146,7 @@ const TypeArea = ({
       <TypingText
         content={round.content.text}
         currentText={input.currentText}
-        bestPaceIndex={bestPaceIndex}
+        ghostIndex={ghostIndex}
         isCompleted={round.isCompleted}
       />
 
@@ -174,17 +158,30 @@ const TypeArea = ({
         onInputChange={handleInputChange}
       />
 
-      {/* Show prompt before user starts typing */}
       {!isTyping && !round.isCompleted && input.currentText.length === 0 && (
         <div className="mt-6 text-center">
           <p className="default-text text-lg animate-pulse">
-            Start typing to begin!
+            Start typing to begin
           </p>
         </div>
       )}
 
-      {round.isCompleted && (
-        <ResultsModal round={round} gameProgress={gameProgress} />
+      {isTyping && !round.isCompleted && liveWpm > 0 && (
+        <div className="mt-6 text-center">
+          <span
+            className={`text-4xl font-mono font-light opacity-50 ${liveWpm >= bestWpm && bestWpm > 0 ? "correct-text" : "default-text"}`}
+          >
+            {liveWpm}
+          </span>
+          <span className="text-sm default-text opacity-30 ml-2">wpm</span>
+        </div>
+      )}
+
+      {round.isCompleted && round.performance && (
+        <InlineResults
+          performance={round.performance}
+          isPersonalBest={isPersonalBest}
+        />
       )}
     </div>
   );

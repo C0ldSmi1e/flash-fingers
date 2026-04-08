@@ -5,10 +5,6 @@ interface Performance {
   totalTime: number;
   wpm: number;
   accuracy: number;
-  targetWpm: number;
-  wonAgainstTarget: boolean;
-  finalUserPosition: number;
-  finalTargetPosition: number;
 }
 
 export type { Performance };

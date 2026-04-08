@@ -42,11 +42,6 @@ const ColorSettingsTab = ({
 
       {/* Interactive Elements */}
       <ColorRow
-        label={colorLabels.progressBar}
-        value={colors.progressBar}
-        onChange={(color) => onColorChange("progressBar", color)}
-      />
-      <ColorRow
         label={colorLabels.cursor}
         value={colors.cursor}
         onChange={(color) => onColorChange("cursor", color)}
