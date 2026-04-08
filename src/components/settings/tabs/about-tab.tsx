@@ -11,13 +11,14 @@ const AboutTab = () => {
           </div>
           <div>
             <p className="text-muted-foreground">
-              A minimalist typing speed test designed to help you improve your typing skills 
-              while maintaining focus and flow.
+              A minimalist typing speed test designed to help you improve your typing
+              skills while maintaining focus and flow.
             </p>
           </div>
           <div>
             <p className="text-muted-foreground">
-              Built with Next.js, React, and shadcn/ui for a modern, accessible typing experience.
+              Built with Next.js, React, and shadcn/ui for a modern, accessible
+              typing experience.
             </p>
           </div>
           <div className="pt-4 border-t border-border">

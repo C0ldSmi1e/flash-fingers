@@ -13,31 +13,36 @@ interface WordData {
   endIndex: number;
 }
 
-const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: TypingTextProps) => {
+const TypingText = ({
+  content,
+  currentText,
+  bestPaceIndex,
+  isCompleted,
+}: TypingTextProps) => {
   // Parse content into words while preserving spaces
   const parseIntoWords = (text: string): WordData[] => {
     const words: WordData[] = [];
     let currentIndex = 0;
-    
+
     // Split by spaces but keep track of positions
     const parts = text.split(/(\s+)/);
-    
+
     for (const part of parts) {
       if (part.length > 0) {
         words.push({
           text: part,
           startIndex: currentIndex,
-          endIndex: currentIndex + part.length - 1
+          endIndex: currentIndex + part.length - 1,
         });
         currentIndex += part.length;
       }
     }
-    
+
     return words;
   };
 
   const words = parseIntoWords(content);
-  
+
   // Find first mismatch by comparing each character directly
   let firstMismatchIndex = -1;
   for (let i = 0; i < currentText.length; i++) {
@@ -51,7 +56,7 @@ const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: Typing
     return word.text.split("").map((char, charIndex) => {
       const globalIndex = word.startIndex + charIndex;
       let className = "transition-colors";
-      
+
       // User typing status (green for correct, red for incorrect)
       if (globalIndex < currentText.length) {
         if (firstMismatchIndex === -1 || globalIndex < firstMismatchIndex) {
@@ -68,7 +73,7 @@ const TypingText = ({ content, currentText, bestPaceIndex, isCompleted }: Typing
       } else {
         className += " default-text";
       }
-      
+
       // Best pace underline - progress bar color for characters up to pace position
       if (bestPaceIndex >= 0 && globalIndex < bestPaceIndex) {
         className += " progress-underline";

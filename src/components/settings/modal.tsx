@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Dialog, 
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Palette, Info } from "lucide-react";
 import { useColorPersistence } from "@/hooks/useColorPersistence";
@@ -32,7 +28,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     switch (activeTab) {
       case "color":
         return (
-          <ColorSettingsTab 
+          <ColorSettingsTab
             colors={colors}
             onColorChange={updateColor}
             onReset={resetColors}
@@ -46,10 +42,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={onClose}
-    >
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl h-4/5 flex flex-col p-4 border-none bg-gradient-to-r from-white/80 to-[#EAF4FF]/40 backdrop-blur-xs">
         <DialogTitle className="text-2xl font-bold">Settings</DialogTitle>
         <div className="w-full h-full flex gap-4 overflow-y-auto">
@@ -58,7 +51,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             <div className="flex flex-col gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
-                
+
                 return (
                   <Button
                     key={tab.id}
@@ -72,11 +65,9 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
               })}
             </div>
           </div>
-          
+
           {/* Right Content Area */}
-          <div className="w-full h-full overflow-y-auto">
-            {renderTabContent()}
-          </div>
+          <div className="w-full h-full overflow-y-auto">{renderTabContent()}</div>
         </div>
       </DialogContent>
     </Dialog>

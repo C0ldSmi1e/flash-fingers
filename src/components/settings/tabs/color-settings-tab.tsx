@@ -10,7 +10,11 @@ interface ColorSettingsTabProps {
   onReset: () => void;
 }
 
-const ColorSettingsTab = ({ colors, onColorChange, onReset }: ColorSettingsTabProps) => {
+const ColorSettingsTab = ({
+  colors,
+  onColorChange,
+  onReset,
+}: ColorSettingsTabProps) => {
   return (
     <div className="flex flex-col gap-4">
       <ColorRow

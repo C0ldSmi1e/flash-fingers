@@ -5,23 +5,21 @@ import { ColorSettings, defaultColors } from "@/types/colors";
 
 const COLOR_STORAGE_KEY = "flash-fingers-colors";
 
-export const useColorPersistence = () => {
-  const [colors, setColors] = useState<ColorSettings>(defaultColors);
-
-  // Load colors from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedColors = localStorage.getItem(COLOR_STORAGE_KEY);
-      if (savedColors) {
-        const parsedColors = JSON.parse(savedColors) as ColorSettings;
-        setColors(parsedColors);
-      }
-    } catch (error) {
-      console.warn("Failed to load saved colors:", error);
-      // Fallback to defaults if parsing fails
-      setColors(defaultColors);
+function loadColors(): ColorSettings {
+  if (typeof window === "undefined") return defaultColors;
+  try {
+    const savedColors = localStorage.getItem(COLOR_STORAGE_KEY);
+    if (savedColors) {
+      return JSON.parse(savedColors) as ColorSettings;
     }
-  }, []);
+  } catch (error) {
+    console.warn("Failed to load saved colors:", error);
+  }
+  return defaultColors;
+}
+
+export const useColorPersistence = () => {
+  const [colors, setColors] = useState<ColorSettings>(loadColors);
 
   // Apply colors to CSS custom properties whenever colors change
   useEffect(() => {
@@ -29,7 +27,7 @@ export const useColorPersistence = () => {
     Object.entries(colors).forEach(([key, value]) => {
       root.style.setProperty(
         `--color-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`,
-        value
+        value,
       );
     });
   }, [colors]);

@@ -61,10 +61,14 @@ const HomePage = () => {
 
   const handleTypingStart = () => {
     if (currentRound && !currentRound.startTime) {
-      setCurrentRound(prev => prev ? ({
-        ...prev,
-        startTime: new Date(),
-      }) : null);
+      setCurrentRound((prev) =>
+        prev
+          ? {
+              ...prev,
+              startTime: new Date(),
+            }
+          : null,
+      );
     }
   };
 
@@ -80,11 +84,26 @@ const HomePage = () => {
       };
     }
 
-    const totalTime = completedRounds.reduce((sum, round) => sum + (round.performance?.totalTime || 0), 0);
-    const averageWpm = completedRounds.reduce((sum, round) => sum + (round.performance?.wpm || 0), 0) / completedRounds.length;
-    const averageAccuracy = completedRounds.reduce((sum, round) => sum + (round.performance?.accuracy || 0), 0) / completedRounds.length;
-    const bestWpm = Math.max(...completedRounds.map(round => round.performance?.wpm || 0));
-    const bestAccuracy = Math.max(...completedRounds.map(round => round.performance?.accuracy || 0));
+    const totalTime = completedRounds.reduce(
+      (sum, round) => sum + (round.performance?.totalTime || 0),
+      0,
+    );
+    const averageWpm =
+      completedRounds.reduce(
+        (sum, round) => sum + (round.performance?.wpm || 0),
+        0,
+      ) / completedRounds.length;
+    const averageAccuracy =
+      completedRounds.reduce(
+        (sum, round) => sum + (round.performance?.accuracy || 0),
+        0,
+      ) / completedRounds.length;
+    const bestWpm = Math.max(
+      ...completedRounds.map((round) => round.performance?.wpm || 0),
+    );
+    const bestAccuracy = Math.max(
+      ...completedRounds.map((round) => round.performance?.accuracy || 0),
+    );
 
     return {
       totalRounds: completedRounds.length,
@@ -104,16 +123,20 @@ const HomePage = () => {
         isCompleted: true,
         performance: finalPerformance,
       };
-      
+
       const updatedRounds = [...game.rounds, completedRound];
       const updatedProgress = calculateProgress(updatedRounds);
-      
-      setGame(prev => prev ? ({
-        ...prev,
-        rounds: updatedRounds,
-        progress: updatedProgress,
-      }) : null);
-      
+
+      setGame((prev) =>
+        prev
+          ? {
+              ...prev,
+              rounds: updatedRounds,
+              progress: updatedProgress,
+            }
+          : null,
+      );
+
       setCurrentRound(completedRound);
     }
   };
@@ -146,27 +169,27 @@ const HomePage = () => {
   }
 
   return (
-    <div 
+    <div
       className="w-full flex flex-col items-center justify-center h-screen relative"
       style={{ backgroundColor: "var(--color-page-background, #ffffff)" }}
     >
-      <TypeArea 
+      <TypeArea
         round={currentRound}
-        input={input} 
+        input={input}
         setInput={setInput}
         gameProgress={game.progress}
         onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
       />
-        
+
       {/* Settings Button - Bottom Right */}
       <SettingsButton onClick={() => setIsSettingsOpen(true)} />
-        
+
       {/* Settings Modal */}
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );

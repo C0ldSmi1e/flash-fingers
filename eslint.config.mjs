@@ -1,40 +1,35 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+// bun add -d eslint eslint-config-next eslint-config-prettier eslint-plugin-prettier prettier typescript-eslint
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import nextConfig from "eslint-config-next";
+import tseslint from "typescript-eslint";
+import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    "ignores": [
-      "src/components/ui/*",
-      "src/lib/utils.ts"
-    ],
-    "rules": {
-      "indent": [
-        "error",
-        2,
-        {
-          "SwitchCase": 1
-        }
-      ],
+    ignores: ["src/components/ui/**", "src/lib/utils.ts", "src/generated/**"],
+  },
+  ...nextConfig,
+  eslintPluginPrettier,
+  {
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
+    rules: {
+      indent: "off",
       "linebreak-style": ["error", "unix"],
-      "quotes": ["error", "double"],
-      "semi": ["error", "always"],
+      quotes: "off",
+      semi: "off",
       "no-console": 0,
-      "@typescript-eslint/no-unused-vars": ["warn", {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }]
-    }
-  }
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

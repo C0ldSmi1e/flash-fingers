@@ -37,7 +37,7 @@ const ColorRow = ({ label, value, onChange }: ColorRowProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    
+
     // Validate hex color format
     if (/^#[0-9A-F]{6}$/i.test(newValue)) {
       onChange(newValue);
@@ -62,7 +62,7 @@ const ColorRow = ({ label, value, onChange }: ColorRowProps) => {
       <div className="flex-1">
         <span className="text-sm font-medium">{label}</span>
       </div>
-      
+
       {/* Right: Color preview and input */}
       <div className="flex items-center gap-3 overflow-visible">
         {/* Color Preview Circle */}
@@ -72,18 +72,15 @@ const ColorRow = ({ label, value, onChange }: ColorRowProps) => {
             style={{ backgroundColor: value }}
             onClick={() => setIsPickerOpen(!isPickerOpen)}
           />
-          
+
           {/* Color Picker Popup */}
           {isPickerOpen && (
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 p-3 bg-background border border-border rounded-lg shadow-xl">
-              <HexColorPicker 
-                color={value} 
-                onChange={handleColorPickerChange}
-              />
+              <HexColorPicker color={value} onChange={handleColorPickerChange} />
             </div>
           )}
         </div>
-        
+
         {/* RGB Input */}
         <Input
           type="text"

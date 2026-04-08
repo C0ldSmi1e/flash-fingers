@@ -10,13 +10,13 @@ const ColorProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const savedColors = localStorage.getItem("flash-fingers-colors");
         const colors = savedColors ? JSON.parse(savedColors) : defaultColors;
-        
+
         // Apply colors to CSS custom properties
         const root = document.documentElement;
         Object.entries(colors).forEach(([key, value]) => {
           root.style.setProperty(
             `--color-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`,
-            value as string
+            value as string,
           );
         });
       } catch (error) {
@@ -26,7 +26,7 @@ const ColorProvider = ({ children }: { children: React.ReactNode }) => {
         Object.entries(defaultColors).forEach(([key, value]) => {
           root.style.setProperty(
             `--color-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`,
-            value
+            value,
           );
         });
       }

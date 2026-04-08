@@ -2,11 +2,11 @@
 
 import { Round } from "@/types/round";
 import { Progress } from "@/types/progress";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -34,7 +34,7 @@ const ResultsModal = ({ round, gameProgress }: ResultsModalProps) => {
             </DialogTitle>
           </div>
         </DialogHeader>
-        
+
         <div className="space-y-4 mb-6">
           <Card>
             <CardContent className="space-y-2">
@@ -56,7 +56,7 @@ const ResultsModal = ({ round, gameProgress }: ResultsModalProps) => {
               </div>
             </CardContent>
           </Card>
-          
+
           {gameProgress.totalRounds > 0 && (
             <Card>
               <CardContent className="space-y-2">
@@ -80,10 +80,8 @@ const ResultsModal = ({ round, gameProgress }: ResultsModalProps) => {
             </Card>
           )}
         </div>
-        
-        <div className="text-center animate-pulse">
-            Press any key to continue
-        </div>
+
+        <div className="text-center animate-pulse">Press any key to continue</div>
       </DialogContent>
     </Dialog>
   );
