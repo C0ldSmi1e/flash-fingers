@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Palette, Info } from "lucide-react";
-import { useColorPersistence } from "@/hooks/useColorPersistence";
+import { useColorPersistence } from "@/hooks/use-color-persistence";
 import { ColorSettingsTab } from "./tabs/color-settings-tab";
 import { AboutTab } from "./tabs/about-tab";
 

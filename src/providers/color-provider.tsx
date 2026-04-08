@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { defaultColors } from "@/types/colors";
-import { COLOR_STORAGE_KEY } from "@/hooks/useColorPersistence";
+import { COLOR_STORAGE_KEY } from "@/hooks/use-color-persistence";
 
 const ColorProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {

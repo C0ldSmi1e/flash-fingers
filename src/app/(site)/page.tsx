@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getContent } from "@/actions/client/get-content";
+import { getContent } from "@/utils/get-content";
 import { Input } from "@/types/input";
 import { Round } from "@/types/round";
 import { Game } from "@/types/game";
