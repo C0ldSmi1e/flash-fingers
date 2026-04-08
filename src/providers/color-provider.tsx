@@ -2,13 +2,14 @@
 
 import { useEffect } from "react";
 import { defaultColors } from "@/types/colors";
+import { COLOR_STORAGE_KEY } from "@/hooks/useColorPersistence";
 
 const ColorProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Initialize colors on app startup
     const initializeColors = () => {
       try {
-        const savedColors = localStorage.getItem("flash-fingers-colors");
+        const savedColors = localStorage.getItem(COLOR_STORAGE_KEY);
         const colors = savedColors ? JSON.parse(savedColors) : defaultColors;
 
         // Apply colors to CSS custom properties

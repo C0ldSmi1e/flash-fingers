@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/types/input";
 import { Round } from "@/types/round";
 import { Progress } from "@/types/progress";
@@ -33,14 +33,26 @@ const TypeArea = ({
   const [typingStartTime, setTypingStartTime] = useState<Date | null>(null);
   const [currentTargetWpm, setCurrentTargetWpm] = useState(0);
 
+  const getTargetWpm = useCallback(
+    () =>
+      gameProgress.averageWpm > 0
+        ? gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3
+        : 30,
+    [gameProgress.averageWpm, gameProgress.bestWpm],
+  );
+
+  const resetTypingState = useCallback(() => {
+    setIsTyping(false);
+    setTypingStartTime(null);
+    setBestPaceIndex(-1);
+  }, []);
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (round.isCompleted) {
         e.preventDefault();
         e.stopPropagation();
-        setIsTyping(false);
-        setTypingStartTime(null);
-        setBestPaceIndex(-1);
+        resetTypingState();
         onRestart();
       }
     };
@@ -49,18 +61,14 @@ const TypeArea = ({
       window.addEventListener("keydown", handleKeyPress, true);
       return () => window.removeEventListener("keydown", handleKeyPress, true);
     }
-  }, [round.isCompleted, onRestart]);
+  }, [round.isCompleted, onRestart, resetTypingState]);
 
-  // Auto-update pace indicator smoothly
   useEffect(() => {
     if (!isTyping || round.isCompleted || !gameProgress || !typingStartTime) {
       return;
     }
 
-    const effectiveWpm =
-      gameProgress.averageWpm > 0
-        ? gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3
-        : 30;
+    const effectiveWpm = getTargetWpm();
 
     const interval = setInterval(() => {
       const currentTime = (Date.now() - typingStartTime.getTime()) / 1000;
@@ -69,7 +77,7 @@ const TypeArea = ({
         round.content.text.length,
       );
       setBestPaceIndex(Math.ceil(bestPaceChars));
-    }, 50); // Update every 50ms for smoother animation
+    }, 50);
 
     return () => clearInterval(interval);
   }, [
@@ -78,7 +86,7 @@ const TypeArea = ({
     gameProgress,
     typingStartTime,
     round.content.text.length,
-    input.currentText.length,
+    getTargetWpm,
   ]);
 
   const calculatePerformance = (
@@ -130,12 +138,7 @@ const TypeArea = ({
       setTypingStartTime(new Date());
     }
 
-    // Set target WPM for this round
-    const targetWpm =
-      gameProgress.averageWpm > 0
-        ? gameProgress.averageWpm * 0.7 + gameProgress.bestWpm * 0.3
-        : 30;
-    setCurrentTargetWpm(targetWpm);
+    setCurrentTargetWpm(getTargetWpm());
   };
 
   const handleInputChange = (newText: string, lengthDiff: number) => {
@@ -145,9 +148,7 @@ const TypeArea = ({
         .split("")
         .every((char, index) => char === newText[index]);
       if (isComplete) {
-        setIsTyping(false);
-        setTypingStartTime(null);
-        setBestPaceIndex(-1);
+        resetTypingState();
         const newTypedCount =
           lengthDiff === 1 ? input.typedCount + 1 : input.typedCount;
         const finalPerformance = calculatePerformance(newText, newTypedCount);

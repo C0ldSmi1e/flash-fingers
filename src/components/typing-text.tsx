@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 interface TypingTextProps {
   content: string;
   currentText: string;
@@ -19,17 +21,14 @@ const TypingText = ({
   bestPaceIndex,
   isCompleted,
 }: TypingTextProps) => {
-  // Parse content into words while preserving spaces
-  const parseIntoWords = (text: string): WordData[] => {
-    const words: WordData[] = [];
+  const words = useMemo(() => {
+    const result: WordData[] = [];
     let currentIndex = 0;
-
-    // Split by spaces but keep track of positions
-    const parts = text.split(/(\s+)/);
+    const parts = content.split(/(\s+)/);
 
     for (const part of parts) {
       if (part.length > 0) {
-        words.push({
+        result.push({
           text: part,
           startIndex: currentIndex,
           endIndex: currentIndex + part.length - 1,
@@ -38,10 +37,8 @@ const TypingText = ({
       }
     }
 
-    return words;
-  };
-
-  const words = parseIntoWords(content);
+    return result;
+  }, [content]);
 
   // Find first mismatch by comparing each character directly
   let firstMismatchIndex = -1;

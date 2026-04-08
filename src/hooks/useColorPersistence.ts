@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ColorSettings, defaultColors } from "@/types/colors";
 
-const COLOR_STORAGE_KEY = "flash-fingers-colors";
+export const COLOR_STORAGE_KEY = "flash-fingers-colors";
 
 function loadColors(): ColorSettings {
   if (typeof window === "undefined") return defaultColors;
