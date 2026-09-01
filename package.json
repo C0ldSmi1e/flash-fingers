@@ -9,6 +9,7 @@
     "lint": "bun --bun eslint ."
   },
   "dependencies": {
+    "drizzle-orm": "^1.0.0-rc.4",
     "next": "^16.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -16,9 +17,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "^1.4.0",
     "@types/node": "^25.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^1.0.0-rc.4",
     "eslint": "^9",
     "eslint-config-next": "^16.2.2",
     "eslint-config-prettier": "^10.1.8",
