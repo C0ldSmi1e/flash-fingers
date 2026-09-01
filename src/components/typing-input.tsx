@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { Input } from "@/src/types/input";
+import { Input } from "@/src/schemas/input";
 
 interface TypingInputProps {
   input: Input;

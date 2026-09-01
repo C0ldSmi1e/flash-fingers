@@ -1,4 +1,4 @@
-import { Content } from "@/types/content";
+import { Content } from "@/src/schemas/content";
 
 const content: Content[] = [
   {

@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Input } from "@/src/types/input";
-import { Round } from "@/src/types/round";
-import { Performance } from "@/src/types/performance";
+import { Input } from "@/src/schemas/input";
+import { Round } from "@/src/schemas/round";
+import { Performance } from "@/src/schemas/performance";
 import { TypingText } from "@/src/components/typing-text";
 import { InlineResults } from "@/src/components/inline-results";
 import { TypingInput } from "@/src/components/typing-input";

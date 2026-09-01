@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { getContent } from "@/src/utils/get-content";
-import { Input } from "@/src/types/input";
-import { Round } from "@/src/types/round";
-import { Game } from "@/src/types/game";
-import { Progress } from "@/src/types/progress";
-import { Performance } from "@/src/types/performance";
+import { Input } from "@/src/schemas/input";
+import { Round } from "@/src/schemas/round";
+import { Game } from "@/src/schemas/game";
+import { Progress } from "@/src/schemas/progress";
+import { Performance } from "@/src/schemas/performance";
 import { TypeArea } from "@/src/components/type-area";
 
 const HomePage = () => {
