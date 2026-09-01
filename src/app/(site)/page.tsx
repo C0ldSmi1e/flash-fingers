@@ -8,8 +8,6 @@ import { Game } from "@/types/game";
 import { Progress } from "@/types/progress";
 import { Performance } from "@/types/performance";
 import { TypeArea } from "@/components/type-area";
-import { SettingsModal } from "@/components/settings/modal";
-import { SettingsButton } from "@/components/settings/button";
 
 const HomePage = () => {
   const [game, setGame] = useState<Game | null>(null);
@@ -20,7 +18,6 @@ const HomePage = () => {
     wordCount: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPersonalBest, setIsPersonalBest] = useState(false);
 
   const initializeGame = () => {
@@ -173,10 +170,7 @@ const HomePage = () => {
   }
 
   return (
-    <div
-      className="w-full flex flex-col items-center justify-center h-screen relative"
-      style={{ backgroundColor: "var(--color-page-background, #ffffff)" }}
-    >
+    <div className="w-full flex flex-col items-center justify-center h-screen relative">
       <TypeArea
         round={currentRound}
         input={input}
@@ -186,15 +180,6 @@ const HomePage = () => {
         onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
-      />
-
-      {/* Settings Button - Bottom Right */}
-      <SettingsButton onClick={() => setIsSettingsOpen(true)} />
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );

@@ -1,53 +1,48 @@
 @import "tailwindcss";
 
+/* Application palette — single source of truth for the typing surface. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-page-background: #ffffff;
+  --color-default-text: #6b7280;
+  --color-correct-text: #10b981;
+  --color-wrong-text: #ef4444;
+  --color-cursor: #f59e0b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--color-page-background, var(--background));
+  background: var(--color-page-background);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Typing text character states */
 .correct-text {
-  color: var(--color-correct-text, #10b981);
+  color: var(--color-correct-text);
 }
 
 .wrong-text {
-  color: var(--color-wrong-text, #ef4444);
+  color: var(--color-wrong-text);
 }
 
 .wrong-space {
-  background-color: var(--color-wrong-text, #ef4444);
+  background-color: var(--color-wrong-text);
   opacity: 0.3;
 }
 
 .default-text {
-  color: var(--color-default-text, #6b7280);
+  color: var(--color-default-text);
 }
 
 .cursor-text {
-  border-left: 2px solid var(--color-cursor, #f59e0b);
+  border-left: 2px solid var(--color-cursor);
 }
 
 .ghost-cursor {
-  background-color: color-mix(in srgb, var(--color-cursor, #f59e0b) 18%, transparent);
+  background-color: color-mix(in srgb, var(--color-cursor) 18%, transparent);
   border-radius: 2px;
 }
 
