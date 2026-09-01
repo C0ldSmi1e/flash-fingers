@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Application palette — single source of truth for the typing surface. */
 :root {
   --color-page-background: #ffffff;
   --color-default-text: #6b7280;

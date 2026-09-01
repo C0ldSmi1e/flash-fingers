@@ -34,7 +34,12 @@ const TypeArea = ({
   const [liveWpm, setLiveWpm] = useState(0);
   const [ghostIndex, setGhostIndex] = useState(-1);
   const textLengthRef = useRef(0);
-  textLengthRef.current = input.currentText.length;
+
+  // Mirrored into a ref so the live-WPM interval below reads the latest length
+  // without resubscribing — and restarting its 500ms tick — on every keystroke.
+  useEffect(() => {
+    textLengthRef.current = input.currentText.length;
+  }, [input.currentText.length]);
 
   const resetTypingState = useCallback(() => {
     setIsTyping(false);
@@ -90,7 +95,13 @@ const TypeArea = ({
     }, 50);
 
     return () => clearInterval(interval);
-  }, [isTyping, round.isCompleted, typingStartTime, bestWpm, round.content.text.length]);
+  }, [
+    isTyping,
+    round.isCompleted,
+    typingStartTime,
+    bestWpm,
+    round.content.text.length,
+  ]);
 
   const calculatePerformance = (
     typedText: string,
@@ -160,9 +171,7 @@ const TypeArea = ({
 
       {!isTyping && !round.isCompleted && input.currentText.length === 0 && (
         <div className="mt-6 text-center">
-          <p className="default-text text-lg animate-pulse">
-            Start typing to begin
-          </p>
+          <p className="default-text text-lg animate-pulse">Start typing to begin</p>
         </div>
       )}
 

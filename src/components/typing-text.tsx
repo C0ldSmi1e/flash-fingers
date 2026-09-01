@@ -72,7 +72,12 @@ const TypingText = ({
       }
 
       // Ghost cursor — shows on the character at the ghost's position
-      if (ghostIndex >= 0 && globalIndex === ghostIndex && globalIndex >= currentText.length && !isCompleted) {
+      if (
+        ghostIndex >= 0 &&
+        globalIndex === ghostIndex &&
+        globalIndex >= currentText.length &&
+        !isCompleted
+      ) {
         className += " ghost-cursor";
       }
 

@@ -28,9 +28,7 @@ const InlineResults = ({ performance, isPersonalBest }: InlineResultsProps) => {
       </div>
 
       {isPersonalBest && (
-        <p className="correct-text text-sm mt-3 font-medium">
-          New personal best!
-        </p>
+        <p className="correct-text text-sm mt-3 font-medium">New personal best!</p>
       )}
 
       <p className="default-text text-sm mt-4 animate-pulse opacity-60">
