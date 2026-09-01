@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getContent } from "@/utils/get-content";
-import { Input } from "@/types/input";
-import { Round } from "@/types/round";
-import { Game } from "@/types/game";
-import { Progress } from "@/types/progress";
-import { Performance } from "@/types/performance";
-import { TypeArea } from "@/components/type-area";
+import { getContent } from "@/src/utils/get-content";
+import { Input } from "@/src/types/input";
+import { Round } from "@/src/types/round";
+import { Game } from "@/src/types/game";
+import { Progress } from "@/src/types/progress";
+import { Performance } from "@/src/types/performance";
+import { TypeArea } from "@/src/components/type-area";
 
 const HomePage = () => {
   const [game, setGame] = useState<Game | null>(null);

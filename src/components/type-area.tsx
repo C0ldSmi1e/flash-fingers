@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Input } from "@/types/input";
-import { Round } from "@/types/round";
-import { Performance } from "@/types/performance";
-import { TypingText } from "@/components/typing-text";
-import { InlineResults } from "@/components/inline-results";
-import { TypingInput } from "@/components/typing-input";
+import { Input } from "@/src/types/input";
+import { Round } from "@/src/types/round";
+import { Performance } from "@/src/types/performance";
+import { TypingText } from "@/src/components/typing-text";
+import { InlineResults } from "@/src/components/inline-results";
+import { TypingInput } from "@/src/components/typing-input";
 
 interface TypeAreaProps {
   round: Round;

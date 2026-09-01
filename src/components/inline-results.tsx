@@ -1,6 +1,6 @@
 "use client";
 
-import { Performance } from "@/types/performance";
+import { Performance } from "@/src/types/performance";
 
 interface InlineResultsProps {
   performance: Performance;
