@@ -8,8 +8,6 @@ import { env } from "@/src/server/env";
 const createDb = () => {
   mkdirSync(dirname(env.DATABASE_PATH), { recursive: true });
 
-  // Passing the path rather than a Database instance keeps bun:sqlite out of
-  // this file's imports — drizzle owns the connection.
   const db = drizzle(env.DATABASE_PATH);
 
   db.run(sql`PRAGMA journal_mode = WAL`);
@@ -19,8 +17,7 @@ const createDb = () => {
   return db;
 };
 
-// Cached on globalThis so Next's dev HMR doesn't open a fresh handle each time
-// this module is re-evaluated.
+// Cached on globalThis so dev HMR reuses one connection.
 const globalForDb = globalThis as typeof globalThis & {
   flashFingersDb?: ReturnType<typeof createDb>;
 };
