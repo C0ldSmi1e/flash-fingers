@@ -14,7 +14,6 @@ interface TypeAreaProps {
   setInput: (input: Input) => void;
   bestWpm: number;
   isPersonalBest: boolean;
-  onTypingStart: () => void;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
 }
@@ -25,7 +24,6 @@ const TypeArea = ({
   setInput,
   bestWpm,
   isPersonalBest,
-  onTypingStart,
   onCompletion,
   onRestart,
 }: TypeAreaProps) => {
@@ -129,7 +127,6 @@ const TypeArea = ({
   };
 
   const handleTypingStart = () => {
-    onTypingStart();
     setIsTyping(true);
     if (!typingStartTime) {
       setTypingStartTime(new Date());

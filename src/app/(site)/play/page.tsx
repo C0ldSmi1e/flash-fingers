@@ -64,19 +64,6 @@ const PlayPage = () => {
     }
   };
 
-  const handleTypingStart = () => {
-    if (currentRound && !currentRound.startTime) {
-      setCurrentRound((prev) =>
-        prev
-          ? {
-              ...prev,
-              startTime: new Date(),
-            }
-          : null,
-      );
-    }
-  };
-
   const calculateProgress = (completedRounds: Round[]): Progress => {
     if (completedRounds.length === 0) {
       return {
@@ -219,7 +206,6 @@ const PlayPage = () => {
         setInput={setInput}
         bestWpm={game.progress.bestWpm}
         isPersonalBest={isPersonalBest}
-        onTypingStart={handleTypingStart}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
       />
