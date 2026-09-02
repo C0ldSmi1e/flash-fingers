@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getContent } from "@/src/utils/get-content";
+import { api } from "@/src/utils/api";
+import { Content } from "@/src/schemas/content";
 import { Input } from "@/src/schemas/input";
 import { Round } from "@/src/schemas/round";
 import { Game } from "@/src/schemas/game";
@@ -40,7 +41,9 @@ const HomePage = () => {
   const createNewRound = async () => {
     try {
       setIsLoading(true);
-      const content = await getContent();
+      const [content] = await api<Content[]>("/api/content", {
+        cache: "no-store",
+      });
       const newRound: Round = {
         id: crypto.randomUUID(),
         startTime: new Date(),
