@@ -105,9 +105,9 @@ const TypeArea = ({
     typedText: string,
     totalTypedCount: number,
   ): Performance => {
-    const totalTime = typingStartTime
-      ? (Date.now() - typingStartTime.getTime()) / 1000
-      : 0;
+    const endedAt = Date.now();
+    const startedAt = typingStartTime?.getTime() ?? endedAt;
+    const totalTime = (endedAt - startedAt) / 1000;
     const correctChars = round.content.text
       .split("")
       .filter((char, index) => char === typedText[index]).length;
@@ -120,6 +120,8 @@ const TypeArea = ({
       typedCount: totalTypedCount,
       charCount: correctChars,
       wordCount: Math.floor(wordsTyped),
+      startedAt,
+      endedAt,
       totalTime,
       wpm,
       accuracy,

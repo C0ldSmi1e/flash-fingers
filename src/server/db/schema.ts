@@ -1,12 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-  check,
-  index,
-  integer,
-  real,
-  sqliteTable,
-  text,
-} from "drizzle-orm/sqlite-core";
+import { check, index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "@/src/server/db/auth-schema";
 
 // Non-ASCII text (em-dash, curly quotes) can't be typed, making a round
@@ -45,7 +38,8 @@ const records = sqliteTable(
     wpm: integer("wpm").notNull(),
     accuracy: integer("accuracy").notNull(),
     typedCount: integer("typed_count").notNull(),
-    totalTime: real("total_time").notNull(),
+    startedAt: integer("started_at").notNull(),
+    endedAt: integer("ended_at").notNull(),
     createdAt: integer("created_at")
       .notNull()
       .default(sql`(unixepoch())`),

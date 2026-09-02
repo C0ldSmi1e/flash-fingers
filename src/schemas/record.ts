@@ -1,10 +1,12 @@
 import { z } from "zod";
 
-// Client submits raw facts only — wpm/accuracy are computed server-side.
+// Client submits raw facts only — wpm/accuracy/duration are computed
+// server-side. startedAt/endedAt are epoch ms from the client clock.
 const createRecordSchema = z.object({
   contentId: z.number().int().positive(),
   typedCount: z.number().int().positive(),
-  totalTime: z.number().positive(),
+  startedAt: z.number().int().positive(),
+  endedAt: z.number().int().positive(),
 });
 
 const RecordSchema = z.object({
@@ -13,7 +15,8 @@ const RecordSchema = z.object({
   wpm: z.number().int().nonnegative(),
   accuracy: z.number().int().min(0).max(100),
   typedCount: z.number().int().positive(),
-  totalTime: z.number().positive(),
+  startedAt: z.number().int().positive(),
+  endedAt: z.number().int().positive(),
 });
 
 type CreateRecordInput = z.infer<typeof createRecordSchema>;

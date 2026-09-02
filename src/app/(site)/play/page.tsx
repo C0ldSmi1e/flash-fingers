@@ -114,7 +114,8 @@ const PlayPage = () => {
         body: JSON.stringify({
           contentId: round.content.id,
           typedCount: performance.typedCount,
-          totalTime: performance.totalTime,
+          startedAt: performance.startedAt,
+          endedAt: performance.endedAt,
         }),
       });
     } catch (error) {
