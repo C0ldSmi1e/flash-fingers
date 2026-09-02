@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useSession, signOut } from "@/src/utils/auth-client";
 
 const HomePage = () => {
+  const { data: session, isPending } = useSession();
+
   return (
     <div className="w-full flex flex-col items-center justify-center h-screen gap-6">
       <h1 className="text-5xl font-mono font-bold default-text">Flash Fingers</h1>
@@ -13,6 +18,28 @@ const HomePage = () => {
       >
         Play
       </Link>
+
+      <div className="h-6 text-sm font-mono">
+        {!isPending &&
+          (session ? (
+            <div className="flex items-center gap-3">
+              <span className="default-text">{session.user.name}</span>
+              <button
+                onClick={() => signOut()}
+                className="default-text opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/sign-in"
+              className="default-text opacity-60 hover:opacity-100 transition-opacity"
+            >
+              Sign in
+            </Link>
+          ))}
+      </div>
     </div>
   );
 };

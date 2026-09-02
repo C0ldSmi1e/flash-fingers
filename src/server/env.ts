@@ -4,6 +4,7 @@ import { z } from "zod";
 const envSchema = z.object({
   OPENAI_API_KEY: z.string().min(1),
   DATABASE_PATH: z.string().min(1).default("data/flash-fingers.db"),
+  BETTER_AUTH_SECRET: z.string().min(1),
 });
 
 // Empty strings (e.g. from a copied .env.example) count as unset.
