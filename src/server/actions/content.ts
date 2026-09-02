@@ -22,6 +22,7 @@ const ContentTextSchema = z
 const getRandomContent = ({ limit }: { limit: number }): Content[] => {
   const rows = db
     .select({
+      id: content.id,
       text: content.text,
       charCount: content.charCount,
       wordCount: content.wordCount,

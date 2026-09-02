@@ -8,3 +8,8 @@ export const contentText = {
   minLength: 20,
   maxLength: 150,
 };
+
+// Submissions above this are rejected as implausible.
+export const record = {
+  maxWpm: 3000,
+};

@@ -10,6 +10,7 @@ import { Progress } from "@/src/schemas/progress";
 import { Performance } from "@/src/schemas/performance";
 import { TypeArea } from "@/src/components/type-area";
 import { useIsDesktop } from "@/src/hooks/use-is-desktop";
+import { useSession } from "@/src/utils/auth-client";
 
 const PlayPage = () => {
   const [game, setGame] = useState<Game | null>(null);
@@ -22,6 +23,7 @@ const PlayPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPersonalBest, setIsPersonalBest] = useState(false);
   const isDesktop = useIsDesktop();
+  const { data: session } = useSession();
 
   const initializeGame = () => {
     const newGame: Game = {
@@ -121,6 +123,18 @@ const PlayPage = () => {
   const handleCompletion = (finalPerformance: Performance) => {
     if (currentRound && game) {
       setIsPersonalBest(finalPerformance.wpm > game.progress.bestWpm);
+
+      // Signed-in players get the round persisted; anonymous play is not saved.
+      if (session) {
+        api("/api/records", {
+          method: "POST",
+          body: JSON.stringify({
+            contentId: currentRound.content.id,
+            typedCount: finalPerformance.typedCount,
+            totalTime: finalPerformance.totalTime,
+          }),
+        }).catch(console.error);
+      }
 
       const completedRound: Round = {
         ...currentRound,
