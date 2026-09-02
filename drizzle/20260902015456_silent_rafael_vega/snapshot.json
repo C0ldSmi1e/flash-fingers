@@ -1,0 +1,95 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "18af856f-96a6-424f-9eab-8553cb9b64db",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "content",
+      "entityType": "tables"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "text",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": {
+        "as": "(length(text))",
+        "type": "stored"
+      },
+      "name": "char_count",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": {
+        "as": "(length(trim(text)) - length(replace(trim(text), ' ', '')) + 1)",
+        "type": "stored"
+      },
+      "name": "word_count",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(unixepoch())",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "content_pk",
+      "table": "content",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "text"
+      ],
+      "nameExplicit": false,
+      "name": "content_text_unique",
+      "entityType": "uniques",
+      "table": "content"
+    },
+    {
+      "value": "\"text\" NOT GLOB '*[^ -~]*'",
+      "name": "content_text_ascii",
+      "entityType": "checks",
+      "table": "content"
+    }
+  ],
+  "renames": []
+}
