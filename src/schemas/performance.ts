@@ -2,8 +2,6 @@ import { z } from "zod";
 
 const PerformanceSchema = z.object({
   typedCount: z.number().int().nonnegative(),
-  charCount: z.number().int().nonnegative(),
-  wordCount: z.number().int().nonnegative(),
   startedAt: z.number().int().positive(),
   endedAt: z.number().int().positive(),
   totalTime: z.number().nonnegative(),

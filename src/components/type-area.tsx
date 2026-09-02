@@ -113,13 +113,10 @@ const TypeArea = ({
       .filter((char, index) => char === typedText[index]).length;
     const accuracy =
       totalTypedCount > 0 ? Math.round((correctChars / totalTypedCount) * 100) : 0;
-    const wordsTyped = correctChars / 5;
-    const wpm = totalTime > 0 ? Math.round((wordsTyped / totalTime) * 60) : 0;
+    const wpm = totalTime > 0 ? Math.round((correctChars / 5 / totalTime) * 60) : 0;
 
     return {
       typedCount: totalTypedCount,
-      charCount: correctChars,
-      wordCount: Math.floor(wordsTyped),
       startedAt,
       endedAt,
       totalTime,
