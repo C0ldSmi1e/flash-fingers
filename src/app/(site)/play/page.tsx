@@ -120,20 +120,28 @@ const PlayPage = () => {
     };
   };
 
+  const saveRecord = async (round: Round, performance: Performance) => {
+    try {
+      await api("/api/records", {
+        method: "POST",
+        body: JSON.stringify({
+          contentId: round.content.id,
+          typedCount: performance.typedCount,
+          totalTime: performance.totalTime,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleCompletion = (finalPerformance: Performance) => {
     if (currentRound && game) {
       setIsPersonalBest(finalPerformance.wpm > game.progress.bestWpm);
 
       // Signed-in players get the round persisted; anonymous play is not saved.
       if (session) {
-        api("/api/records", {
-          method: "POST",
-          body: JSON.stringify({
-            contentId: currentRound.content.id,
-            typedCount: finalPerformance.typedCount,
-            totalTime: finalPerformance.totalTime,
-          }),
-        }).catch(console.error);
+        saveRecord(currentRound, finalPerformance);
       }
 
       const completedRound: Round = {
