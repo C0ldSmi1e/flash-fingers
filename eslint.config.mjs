@@ -6,12 +6,7 @@ import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 
 const eslintConfig = [
   {
-    ignores: [
-      ".claude/**",
-      "src/components/ui/**",
-      "src/lib/utils.ts",
-      "src/generated/**",
-    ],
+    ignores: [".claude/**", "src/generated/**"],
   },
   ...nextConfig,
   eslintPluginPrettier,
