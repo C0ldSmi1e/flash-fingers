@@ -6,7 +6,11 @@ const ContentSchema = z.object({
   wordCount: z.number().int().nonnegative(),
 });
 
+const contentQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(1),
+});
+
 type Content = z.infer<typeof ContentSchema>;
 
-export { ContentSchema };
+export { ContentSchema, contentQuerySchema };
 export type { Content };
