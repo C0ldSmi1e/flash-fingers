@@ -6,6 +6,7 @@ import { Content } from "@/src/schemas/content";
 import { Input } from "@/src/schemas/input";
 import { Round } from "@/src/schemas/round";
 import { Performance } from "@/src/schemas/performance";
+import { UserStats } from "@/src/schemas/stats";
 import { TypeArea } from "@/src/components/type-area";
 import { useIsDesktop } from "@/src/hooks/use-is-desktop";
 import { useSession } from "@/src/utils/auth-client";
@@ -78,6 +79,22 @@ const PlayPage = () => {
   useEffect(() => {
     createNewRound();
   }, []);
+
+  // Signed-in players pace the ghost against their all-time best.
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+    const loadStats = async () => {
+      try {
+        const stats = await api<UserStats>("/api/me", { cache: "no-store" });
+        setBestWpm((prev) => Math.max(prev, stats.bestWpm));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    loadStats();
+  }, [session]);
 
   if (isDesktop === null) {
     return null;
