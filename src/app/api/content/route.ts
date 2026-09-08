@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { getRandomContent } from "@/src/server/actions/content";
+import { topUpContent } from "@/src/server/actions/generate-content";
 import { contentQuerySchema } from "@/src/schemas/content";
 import { BadRequestError } from "@/src/server/errors";
 import {
@@ -17,6 +18,15 @@ const GET = async (request: NextRequest) => {
     }
 
     const data = getRandomContent({ limit: query.data.limit });
+
+    after(async () => {
+      try {
+        await topUpContent();
+      } catch (error) {
+        console.error("[content] top-up failed", error);
+      }
+    });
+
     return NextResponse.json(createSuccessResponse({ data }), { status: 200 });
   } catch (error) {
     return errorToResponse(error);

@@ -1,5 +1,5 @@
 import "server-only";
-import { sql } from "drizzle-orm";
+import { count, max, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/src/server/db";
 import { content } from "@/src/server/db/schema";
@@ -71,4 +71,13 @@ const createContent = (texts: string[]) => {
   return { inserted, rejected };
 };
 
-export { getRandomContent, createContent };
+const getContentPoolStatus = () => {
+  const [row] = db
+    .select({ total: count(), newestCreatedAt: max(content.createdAt) })
+    .from(content)
+    .all();
+
+  return { total: row?.total ?? 0, newestCreatedAt: row?.newestCreatedAt ?? 0 };
+};
+
+export { getRandomContent, createContent, getContentPoolStatus };
