@@ -44,7 +44,10 @@ const records = sqliteTable(
       .notNull()
       .default(sql`(unixepoch())`),
   },
-  (table) => [index("idx_records_rank").on(table.userId, table.wpm)],
+  (table) => [
+    index("idx_records_rank").on(table.userId, table.wpm),
+    index("idx_records_recent").on(table.userId, table.createdAt),
+  ],
 );
 
 export { content, records };

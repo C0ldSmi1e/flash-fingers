@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { api } from "@/src/utils/api";
+import { stats } from "@/src/config/constants";
 import { Content } from "@/src/schemas/content";
 import { Input } from "@/src/schemas/input";
 import { Round } from "@/src/schemas/round";
@@ -14,7 +15,10 @@ import { useSession } from "@/src/utils/auth-client";
 const PlayPage = () => {
   const [currentRound, setCurrentRound] = useState<Round | null>(null);
   const [input, setInput] = useState<Input>({ currentText: "", typedCount: 0 });
+  const [avgWpm, setAvgWpm] = useState(0);
   const [bestWpm, setBestWpm] = useState(0);
+  const [recentWpms, setRecentWpms] = useState<number[]>([]);
+  const [vsAvg, setVsAvg] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPersonalBest, setIsPersonalBest] = useState(false);
   const isDesktop = useIsDesktop();
@@ -34,6 +38,16 @@ const PlayPage = () => {
     }
   };
 
+  const loadStats = async () => {
+    try {
+      const me = await api<UserStats>("/api/me", { cache: "no-store" });
+      setAvgWpm(me.avgWpm);
+      setBestWpm(me.bestWpm);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const saveRecord = async (round: Round, performance: Performance) => {
     try {
       await api("/api/records", {
@@ -45,6 +59,8 @@ const PlayPage = () => {
           endedAt: performance.endedAt,
         }),
       });
+      // Next round's ghost paces at the updated average.
+      await loadStats();
     } catch (error) {
       console.error(error);
     }
@@ -55,12 +71,18 @@ const PlayPage = () => {
       return;
     }
 
+    // Compare against the average you were actually racing.
+    setVsAvg(avgWpm > 0 ? finalPerformance.wpm - avgWpm : null);
     setIsPersonalBest(finalPerformance.wpm > bestWpm);
     setBestWpm((prev) => Math.max(prev, finalPerformance.wpm));
 
-    // Signed-in players get the round persisted; anonymous play is not saved.
     if (session) {
       saveRecord(currentRound, finalPerformance);
+    } else {
+      // Anonymous play is not saved; keep a session-local window instead.
+      const recent = [...recentWpms, finalPerformance.wpm].slice(-stats.window);
+      setRecentWpms(recent);
+      setAvgWpm(Math.round(recent.reduce((sum, w) => sum + w, 0) / recent.length));
     }
 
     setCurrentRound({
@@ -72,6 +94,7 @@ const PlayPage = () => {
 
   const handleRestart = () => {
     setIsPersonalBest(false);
+    setVsAvg(null);
     setInput({ currentText: "", typedCount: 0 });
     createNewRound();
   };
@@ -80,20 +103,10 @@ const PlayPage = () => {
     createNewRound();
   }, []);
 
-  // Signed-in players pace the ghost against their all-time best.
   useEffect(() => {
-    if (!session) {
-      return;
+    if (session) {
+      loadStats();
     }
-    const loadStats = async () => {
-      try {
-        const stats = await api<UserStats>("/api/me", { cache: "no-store" });
-        setBestWpm((prev) => Math.max(prev, stats.bestWpm));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    loadStats();
   }, [session]);
 
   if (isDesktop === null) {
@@ -125,8 +138,9 @@ const PlayPage = () => {
         round={currentRound}
         input={input}
         setInput={setInput}
-        bestWpm={bestWpm}
+        targetWpm={avgWpm}
         isPersonalBest={isPersonalBest}
+        vsAvg={vsAvg}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
       />

@@ -40,7 +40,8 @@ const HomePage = () => {
             <tr className="opacity-50">
               <th className="px-3 py-1 text-left font-normal">#</th>
               <th className="px-3 py-1 text-left font-normal">player</th>
-              <th className="px-3 py-1 text-right font-normal">best wpm</th>
+              <th className="px-3 py-1 text-right font-normal">avg wpm</th>
+              <th className="px-3 py-1 text-right font-normal">best</th>
               <th className="px-3 py-1 text-right font-normal">rounds</th>
             </tr>
           </thead>
@@ -49,9 +50,8 @@ const HomePage = () => {
               <tr key={entry.name}>
                 <td className="px-3 py-1 opacity-50">{index + 1}</td>
                 <td className="px-3 py-1">{entry.name}</td>
-                <td className="px-3 py-1 text-right correct-text">
-                  {entry.bestWpm}
-                </td>
+                <td className="px-3 py-1 text-right correct-text">{entry.avgWpm}</td>
+                <td className="px-3 py-1 text-right">{entry.bestWpm}</td>
                 <td className="px-3 py-1 text-right">{entry.rounds}</td>
               </tr>
             ))}

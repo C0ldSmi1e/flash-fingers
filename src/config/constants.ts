@@ -22,3 +22,9 @@ export const contentPool = {
   batchSize: 15,
   cooldownMs: 60 * 60 * 1000,
 };
+
+// Rolling avg window; users need rankMinRounds rounds to appear on the leaderboard.
+export const stats = {
+  window: 10,
+  rankMinRounds: 5,
+};

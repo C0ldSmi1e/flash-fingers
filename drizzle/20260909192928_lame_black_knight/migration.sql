@@ -1,0 +1,1 @@
+CREATE INDEX `idx_records_recent` ON `records` (`user_id`,`created_at`);

@@ -12,8 +12,9 @@ interface TypeAreaProps {
   round: Round;
   input: Input;
   setInput: (input: Input) => void;
-  bestWpm: number;
+  targetWpm: number;
   isPersonalBest: boolean;
+  vsAvg: number | null;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
 }
@@ -22,8 +23,9 @@ const TypeArea = ({
   round,
   input,
   setInput,
-  bestWpm,
+  targetWpm,
   isPersonalBest,
+  vsAvg,
   onCompletion,
   onRestart,
 }: TypeAreaProps) => {
@@ -77,16 +79,16 @@ const TypeArea = ({
     return () => clearInterval(interval);
   }, [isTyping, round.isCompleted, typingStartTime]);
 
-  // Ghost cursor — moves through text at your personal best pace
+  // Ghost cursor — moves through text at the target pace (rolling avg)
   useEffect(() => {
-    if (!isTyping || round.isCompleted || !typingStartTime || bestWpm <= 0) {
+    if (!isTyping || round.isCompleted || !typingStartTime || targetWpm <= 0) {
       return;
     }
 
     const interval = setInterval(() => {
       const elapsed = (Date.now() - typingStartTime.getTime()) / 1000;
       const ghostChars = Math.min(
-        Math.ceil((elapsed * bestWpm * 5) / 60),
+        Math.ceil((elapsed * targetWpm * 5) / 60),
         round.content.text.length,
       );
       setGhostIndex(ghostChars);
@@ -97,7 +99,7 @@ const TypeArea = ({
     isTyping,
     round.isCompleted,
     typingStartTime,
-    bestWpm,
+    targetWpm,
     round.content.text.length,
   ]);
 
@@ -174,7 +176,7 @@ const TypeArea = ({
       {isTyping && !round.isCompleted && liveWpm > 0 && (
         <div className="mt-6 text-center">
           <span
-            className={`text-4xl font-mono font-light opacity-50 ${liveWpm >= bestWpm && bestWpm > 0 ? "correct-text" : "default-text"}`}
+            className={`text-4xl font-mono font-light opacity-50 ${liveWpm >= targetWpm && targetWpm > 0 ? "correct-text" : "default-text"}`}
           >
             {liveWpm}
           </span>
@@ -186,6 +188,7 @@ const TypeArea = ({
         <InlineResults
           performance={round.performance}
           isPersonalBest={isPersonalBest}
+          vsAvg={vsAvg}
         />
       )}
     </div>

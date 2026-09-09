@@ -5,9 +5,14 @@ import { Performance } from "@/src/schemas/performance";
 interface InlineResultsProps {
   performance: Performance;
   isPersonalBest: boolean;
+  vsAvg: number | null;
 }
 
-const InlineResults = ({ performance, isPersonalBest }: InlineResultsProps) => {
+const InlineResults = ({
+  performance,
+  isPersonalBest,
+  vsAvg,
+}: InlineResultsProps) => {
   return (
     <div className="mt-8 text-center animate-fade-slide-up">
       <div className="flex items-center justify-center gap-4 text-lg font-mono">
@@ -26,6 +31,15 @@ const InlineResults = ({ performance, isPersonalBest }: InlineResultsProps) => {
           <span className="text-sm ml-0.5 opacity-70">s</span>
         </span>
       </div>
+
+      {vsAvg !== null && (
+        <p
+          className={`text-sm mt-3 ${vsAvg >= 0 ? "correct-text" : "default-text opacity-70"}`}
+        >
+          {vsAvg >= 0 ? "+" : ""}
+          {vsAvg} vs your avg
+        </p>
+      )}
 
       {isPersonalBest && (
         <p className="correct-text text-sm mt-3 font-medium">New personal best!</p>

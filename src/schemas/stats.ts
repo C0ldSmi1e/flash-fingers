@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const UserStatsSchema = z.object({
+  avgWpm: z.number().int().nonnegative(),
   bestWpm: z.number().int().nonnegative(),
   rounds: z.number().int().nonnegative(),
 });
