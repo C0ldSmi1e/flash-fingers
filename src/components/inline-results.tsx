@@ -1,7 +1,7 @@
 "use client";
 
 import { Performance } from "@/src/schemas/performance";
-import { Fireworks } from "@/src/components/fireworks";
+import { ConfettiRain } from "@/src/components/confetti-rain";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -46,8 +46,8 @@ const InlineResults = ({
         </p>
       )}
 
-      {isPersonalBest && <Fireworks shells={4} sparks={110} durationMs={2800} />}
-      {beatAvg && <Fireworks shells={1} sparks={80} durationMs={1600} />}
+      {isPersonalBest && <ConfettiRain count={320} durationMs={4200} />}
+      {beatAvg && <ConfettiRain count={120} durationMs={2600} />}
 
       {isPersonalBest && (
         <>
