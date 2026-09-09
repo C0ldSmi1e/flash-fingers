@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from "react";
 
-const COUNT = 90;
-const DURATION_MS = 1500;
+interface CelebrationBurstProps {
+  count: number;
+  durationMs: number;
+}
 
 // One-shot particle burst in the app palette. Unmounts with the results.
-const PersonalBestBurst = () => {
+const CelebrationBurst = ({ count, durationMs }: CelebrationBurstProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ const PersonalBestBurst = () => {
 
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
-    const particles = Array.from({ length: COUNT }, () => {
+    const particles = Array.from({ length: count }, () => {
       const angle = Math.random() * Math.PI * 2;
       const speed = 4 + Math.random() * 7;
       return {
@@ -50,7 +52,7 @@ const PersonalBestBurst = () => {
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
-      const t = (now - start) / DURATION_MS;
+      const t = (now - start) / durationMs;
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       if (t >= 1) {
         return;
@@ -74,7 +76,7 @@ const PersonalBestBurst = () => {
     frame = requestAnimationFrame(tick);
 
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [count, durationMs]);
 
   return (
     <canvas
@@ -85,4 +87,4 @@ const PersonalBestBurst = () => {
   );
 };
 
-export { PersonalBestBurst };
+export { CelebrationBurst };

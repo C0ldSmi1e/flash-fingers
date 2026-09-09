@@ -1,7 +1,7 @@
 "use client";
 
 import { Performance } from "@/src/schemas/performance";
-import { PersonalBestBurst } from "@/src/components/personal-best-burst";
+import { CelebrationBurst } from "@/src/components/celebration-burst";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -14,12 +14,14 @@ const InlineResults = ({
   isPersonalBest,
   vsAvg,
 }: InlineResultsProps) => {
+  // Two tiers: beating your average is the everyday win, a personal best is rarer.
+  const beatAvg = !isPersonalBest && vsAvg !== null && vsAvg > 0;
+  const pop = isPersonalBest ? "animate-pb-pop" : beatAvg ? "animate-avg-pop" : "";
+
   return (
     <div className="mt-8 text-center animate-fade-slide-up">
       <div className="flex items-center justify-center gap-4 text-lg font-mono">
-        <span
-          className={`correct-text font-semibold text-2xl ${isPersonalBest ? "animate-pb-pop" : ""}`}
-        >
+        <span className={`correct-text font-semibold text-2xl ${pop}`}>
           {performance.wpm}
           <span className="text-sm ml-1 opacity-70">wpm</span>
         </span>
@@ -44,9 +46,11 @@ const InlineResults = ({
         </p>
       )}
 
+      {isPersonalBest && <CelebrationBurst count={90} durationMs={1500} />}
+      {beatAvg && <CelebrationBurst count={30} durationMs={900} />}
+
       {isPersonalBest && (
         <>
-          <PersonalBestBurst />
           <p className="correct-text text-sm mt-3 font-medium animate-fade-slide-up">
             New personal best!
           </p>

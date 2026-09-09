@@ -61,26 +61,36 @@ body {
   animation: fade-slide-up 0.4s ease-out forwards;
 }
 
-/* Personal best: the number swells once */
-@keyframes pb-pop {
+/* The wpm figure swells once; how much depends on the win */
+@keyframes pop {
   0% {
     transform: scale(1);
   }
   35% {
-    transform: scale(1.35);
+    transform: scale(var(--pop));
   }
   100% {
     transform: scale(1);
   }
 }
 
-.animate-pb-pop {
+.animate-pb-pop,
+.animate-avg-pop {
   display: inline-block;
-  animation: pb-pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) 1;
+  animation: pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) 1;
+}
+
+.animate-pb-pop {
+  --pop: 1.35;
+}
+
+.animate-avg-pop {
+  --pop: 1.15;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-pb-pop,
+  .animate-avg-pop,
   .animate-fade-slide-up {
     animation: none;
   }
