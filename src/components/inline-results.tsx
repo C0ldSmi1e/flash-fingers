@@ -1,6 +1,7 @@
 "use client";
 
 import { Performance } from "@/src/schemas/performance";
+import { PersonalBestBurst } from "@/src/components/personal-best-burst";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -16,7 +17,9 @@ const InlineResults = ({
   return (
     <div className="mt-8 text-center animate-fade-slide-up">
       <div className="flex items-center justify-center gap-4 text-lg font-mono">
-        <span className="correct-text font-semibold text-2xl">
+        <span
+          className={`correct-text font-semibold text-2xl ${isPersonalBest ? "animate-pb-pop" : ""}`}
+        >
           {performance.wpm}
           <span className="text-sm ml-1 opacity-70">wpm</span>
         </span>
@@ -42,7 +45,12 @@ const InlineResults = ({
       )}
 
       {isPersonalBest && (
-        <p className="correct-text text-sm mt-3 font-medium">New personal best!</p>
+        <>
+          <PersonalBestBurst />
+          <p className="correct-text text-sm mt-3 font-medium animate-fade-slide-up">
+            New personal best!
+          </p>
+        </>
       )}
 
       <p className="default-text text-sm mt-4 animate-pulse opacity-60">

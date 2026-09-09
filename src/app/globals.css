@@ -60,3 +60,28 @@ body {
 .animate-fade-slide-up {
   animation: fade-slide-up 0.4s ease-out forwards;
 }
+
+/* Personal best: the number swells once */
+@keyframes pb-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pb-pop {
+  display: inline-block;
+  animation: pb-pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pb-pop,
+  .animate-fade-slide-up {
+    animation: none;
+  }
+}
