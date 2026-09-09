@@ -1,7 +1,7 @@
 "use client";
 
 import { Performance } from "@/src/schemas/performance";
-import { CelebrationBurst } from "@/src/components/celebration-burst";
+import { Fireworks } from "@/src/components/fireworks";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -46,8 +46,8 @@ const InlineResults = ({
         </p>
       )}
 
-      {isPersonalBest && <CelebrationBurst count={90} durationMs={1500} />}
-      {beatAvg && <CelebrationBurst count={30} durationMs={900} />}
+      {isPersonalBest && <Fireworks shells={4} sparks={110} durationMs={2800} />}
+      {beatAvg && <Fireworks shells={1} sparks={80} durationMs={1600} />}
 
       {isPersonalBest && (
         <>
