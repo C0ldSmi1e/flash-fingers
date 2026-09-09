@@ -48,20 +48,20 @@ const TypeArea = ({
     setGhostIndex(-1);
   }, []);
 
+  // Any key continues after a round; Escape abandons one in progress (never saved).
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (round.isCompleted) {
-        e.preventDefault();
-        e.stopPropagation();
-        resetTypingState();
-        onRestart();
+      if (!round.isCompleted && e.key !== "Escape") {
+        return;
       }
+      e.preventDefault();
+      e.stopPropagation();
+      resetTypingState();
+      onRestart();
     };
 
-    if (round.isCompleted) {
-      window.addEventListener("keydown", handleKeyPress, true);
-      return () => window.removeEventListener("keydown", handleKeyPress, true);
-    }
+    window.addEventListener("keydown", handleKeyPress, true);
+    return () => window.removeEventListener("keydown", handleKeyPress, true);
   }, [round.isCompleted, onRestart, resetTypingState]);
 
   useEffect(() => {
@@ -170,6 +170,7 @@ const TypeArea = ({
       {!isTyping && !round.isCompleted && input.currentText.length === 0 && (
         <div className="mt-6 text-center">
           <p className="default-text text-lg animate-pulse">Start typing to begin</p>
+          <p className="default-text text-xs mt-2 opacity-40">esc: new passage</p>
         </div>
       )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { api } from "@/src/utils/api";
 import { stats } from "@/src/config/constants";
 import { Content } from "@/src/schemas/content";
@@ -134,6 +135,12 @@ const PlayPage = () => {
 
   return (
     <div className="w-full flex flex-col items-center justify-center h-screen relative">
+      <Link
+        href="/"
+        className="absolute top-6 left-6 font-mono text-sm default-text opacity-40 hover:opacity-100 transition-opacity"
+      >
+        &larr; home
+      </Link>
       <TypeArea
         round={currentRound}
         input={input}
