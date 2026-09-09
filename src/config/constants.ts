@@ -27,4 +27,5 @@ export const contentPool = {
 export const stats = {
   window: 10,
   rankMinRounds: 5,
+  trendRounds: 15,
 };

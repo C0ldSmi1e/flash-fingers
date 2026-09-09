@@ -1,9 +1,13 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/src/server/db";
 import { content, records } from "@/src/server/db/schema";
-import { record as recordLimits } from "@/src/config/constants";
-import type { CreateRecordInput, GameRecord } from "@/src/schemas/record";
+import { record as recordLimits, stats } from "@/src/config/constants";
+import type {
+  CreateRecordInput,
+  GameRecord,
+  UserRecord,
+} from "@/src/schemas/record";
 import { BadRequestError, NotFoundError } from "@/src/server/errors";
 
 // A round only completes fully correct, so correct chars = content length.
@@ -61,3 +65,45 @@ const createRecord = (
 };
 
 export { createRecord };
+
+// vsAvg compares each round to the avg of the (up to) `window` rounds before it.
+const getUserRecords = (
+  userId: string,
+  { limit, offset }: { limit: number; offset: number },
+): { data: UserRecord[]; total: number } => {
+  const avgBefore = sql<
+    number | null
+  >`round(avg(${records.wpm}) over (partition by ${records.userId} order by ${records.createdAt}, ${records.id} rows between ${sql.raw(String(stats.window))} preceding and 1 preceding))`;
+
+  const rows = db
+    .select({
+      id: records.id,
+      wpm: records.wpm,
+      accuracy: records.accuracy,
+      totalTime: sql<number>`(${records.endedAt} - ${records.startedAt}) / 1000.0`,
+      createdAt: records.createdAt,
+      avgBefore,
+    })
+    .from(records)
+    .where(eq(records.userId, userId))
+    .orderBy(desc(records.createdAt), desc(records.id))
+    .limit(limit)
+    .offset(offset)
+    .all();
+
+  const [totals] = db
+    .select({ n: count() })
+    .from(records)
+    .where(eq(records.userId, userId))
+    .all();
+
+  return {
+    data: rows.map(({ avgBefore, ...row }) => ({
+      ...row,
+      vsAvg: avgBefore === null ? null : row.wpm - avgBefore,
+    })),
+    total: totals?.n ?? 0,
+  };
+};
+
+export { getUserRecords };

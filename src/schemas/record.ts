@@ -24,3 +24,19 @@ type GameRecord = z.infer<typeof RecordSchema>;
 
 export { createRecordSchema, RecordSchema };
 export type { CreateRecordInput, GameRecord };
+
+// A round as shown on the profile. vsAvg is against the rolling avg before
+// that round; null for the first.
+const UserRecordSchema = z.object({
+  id: z.number().int().positive(),
+  wpm: z.number().int().nonnegative(),
+  accuracy: z.number().int().min(0).max(100),
+  totalTime: z.number().nonnegative(),
+  createdAt: z.number().int().positive(),
+  vsAvg: z.number().int().nullable(),
+});
+
+type UserRecord = z.infer<typeof UserRecordSchema>;
+
+export { UserRecordSchema };
+export type { UserRecord };

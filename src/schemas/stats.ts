@@ -4,10 +4,16 @@ const UserStatsSchema = z.object({
   avgWpm: z.number().int().nonnegative(),
   bestWpm: z.number().int().nonnegative(),
   rounds: z.number().int().nonnegative(),
+  rank: z.number().int().positive().nullable(),
+  rankedPlayers: z.number().int().nonnegative(),
 });
 
-const RankEntrySchema = UserStatsSchema.extend({
+const RankEntrySchema = z.object({
+  userId: z.string(),
   name: z.string(),
+  avgWpm: z.number().int().nonnegative(),
+  bestWpm: z.number().int().nonnegative(),
+  rounds: z.number().int().nonnegative(),
 });
 
 const rankQuerySchema = z.object({
