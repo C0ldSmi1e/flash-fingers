@@ -96,7 +96,7 @@ const ConfettiRain = ({ count, durationMs }: ConfettiRainProps) => {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 w-screen h-screen pointer-events-none"
+      className="fixed inset-0 w-full h-full pointer-events-none"
     />
   );
 };
