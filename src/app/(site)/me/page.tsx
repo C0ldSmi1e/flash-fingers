@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/src/utils/api";
 import { pagination, stats } from "@/src/config/constants";
 import { UserStats } from "@/src/schemas/stats";
@@ -11,7 +11,10 @@ import { StandardResponse } from "@/src/schemas/standard-response";
 import { TrendLine } from "@/src/components/trend-line";
 import { authClient, useSession, signOut } from "@/src/utils/auth-client";
 
-type AccountMode = null | "rename" | "password";
+type AccountMode = null | "rename" | "password" | "email";
+
+// Shape of one row from authClient.listAccounts(); id is what unlink takes.
+type LinkedAccount = { id: string; providerId: string };
 
 const formatWhen = (unixSeconds: number) => {
   const date = new Date(unixSeconds * 1000);
@@ -26,12 +29,15 @@ const PAGE_SIZE = pagination.defaultLimit * 2;
 
 const MePage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, isPending } = useSession();
   const [me, setMe] = useState<UserStats | null>(null);
   const [rounds, setRounds] = useState<UserRecord[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [mode, setMode] = useState<AccountMode>(null);
   const [name, setName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
@@ -53,14 +59,29 @@ const MePage = () => {
     setHasMore(body.pagination?.hasMore ?? false);
   };
 
+  const loadAccounts = async () => {
+    const result = await authClient.listAccounts();
+    if (!result.error) {
+      setAccounts(result.data);
+    }
+  };
+
   const load = async () => {
     try {
       setMe(await api<UserStats>("/api/me", { cache: "no-store" }));
-      await loadRounds(0);
+      await Promise.all([loadRounds(0), loadAccounts()]);
     } catch (err) {
       console.error(err);
     }
   };
+
+  // Verify-email and link-social callbacks land back here with ?error=CODE.
+  useEffect(() => {
+    const code = searchParams.get("error");
+    if (code) {
+      setError(`Something went wrong: ${code.replaceAll("_", " ").toLowerCase()}`);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -100,6 +121,49 @@ const MePage = () => {
     setNewPassword("");
     setMode(null);
     setNotice("Password changed");
+  };
+
+  const handleChangeEmail = async () => {
+    const result = await authClient.changeEmail({
+      newEmail: newEmail.trim(),
+      callbackURL: "/me",
+    });
+    if (result.error) {
+      setError(result.error.message ?? "Could not change email");
+      return;
+    }
+    setMode(null);
+    setNotice(`Check ${newEmail.trim()} for a confirmation link`);
+  };
+
+  const googleAccount = accounts.find((account) => account.providerId === "google");
+
+  const handleLinkGoogle = async () => {
+    setError(null);
+    setNotice(null);
+    // Redirects to Google and returns to /me once linked.
+    const result = await authClient.linkSocial({
+      provider: "google",
+      callbackURL: "/me",
+    });
+    if (result.error) {
+      setError(result.error.message ?? "Could not link Google");
+    }
+  };
+
+  const handleUnlinkGoogle = async () => {
+    if (!googleAccount) {
+      return;
+    }
+    setError(null);
+    setNotice(null);
+    const result = await authClient.unlinkAccount({ accountId: googleAccount.id });
+    if (result.error) {
+      setError(result.error.message ?? "Could not unlink Google");
+      return;
+    }
+    await loadAccounts();
+    setNotice("Google unlinked");
   };
 
   const handleSignOut = async () => {
@@ -215,13 +279,48 @@ const MePage = () => {
           <button onClick={() => openMode("rename")} className={linkClass}>
             rename
           </button>
+          <button onClick={() => openMode("email")} className={linkClass}>
+            change email
+          </button>
           <button onClick={() => openMode("password")} className={linkClass}>
             change password
+          </button>
+          <button
+            onClick={googleAccount ? handleUnlinkGoogle : handleLinkGoogle}
+            className={linkClass}
+          >
+            {googleAccount ? "unlink google" : "link google"}
           </button>
           <button onClick={handleSignOut} className={linkClass}>
             sign out
           </button>
         </div>
+
+        {mode === "email" && (
+          <div className="flex items-baseline gap-3">
+            <input
+              className={fieldClass}
+              type="email"
+              placeholder="new email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              aria-label="new email"
+              autoFocus
+            />
+            <button
+              onClick={handleChangeEmail}
+              className={`correct-text ${linkClass}`}
+            >
+              send link
+            </button>
+            <button
+              onClick={() => setMode(null)}
+              className={`opacity-45 ${linkClass}`}
+            >
+              cancel
+            </button>
+          </div>
+        )}
 
         {mode === "rename" && (
           <div className="flex items-baseline gap-3">
@@ -284,4 +383,11 @@ const MePage = () => {
   );
 };
 
-export default MePage;
+// useSearchParams needs a Suspense boundary for the static build.
+const MePageWithBoundary = () => (
+  <Suspense fallback={null}>
+    <MePage />
+  </Suspense>
+);
+
+export default MePageWithBoundary;

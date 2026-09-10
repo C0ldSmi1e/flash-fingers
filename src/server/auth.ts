@@ -47,6 +47,9 @@ const auth = betterAuth({
       });
     },
   },
+  // The verification link goes to the new address via sendVerificationEmail
+  // above; the email only changes once it's clicked.
+  user: { changeEmail: { enabled: true } },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
