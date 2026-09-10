@@ -5,12 +5,29 @@ import { headers } from "next/headers";
 import { db } from "@/src/server/db";
 import * as authSchema from "@/src/server/db/auth-schema";
 import { env } from "@/src/server/env";
+import { sendEmail } from "@/src/server/email";
 import { AuthenticationError } from "@/src/server/errors";
 
 const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "sqlite", schema: authSchema }),
-  emailAndPassword: { enabled: true },
+  emailAndPassword: {
+    enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your Flash Fingers password",
+        text: [
+          `Hi ${user.name},`,
+          "",
+          "Someone asked to reset the password for this address. If it was you, open the link below within the hour:",
+          url,
+          "",
+          "If it wasn't you, ignore this email and your password stays the same.",
+        ].join("\n"),
+      });
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
