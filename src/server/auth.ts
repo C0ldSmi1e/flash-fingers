@@ -28,6 +28,25 @@ const auth = betterAuth({
       });
     },
   },
+  // Sent on sign-up and again when an address is changed (user.email is the
+  // new address then). Verification is never required to play.
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your Flash Fingers email",
+        text: [
+          `Hi ${user.name},`,
+          "",
+          `Open the link below within the hour to verify ${user.email}:`,
+          url,
+          "",
+          "If you didn't expect this, you can ignore it.",
+        ].join("\n"),
+      });
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
