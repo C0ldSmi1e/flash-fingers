@@ -16,10 +16,10 @@ export const record = {
 
 // Generation triggers, checked lazily on /api/content.
 export const contentPool = {
-  minSize: 200,
+  minSize: 500,
   maxSize: 2000,
-  staleAfterMs: 72 * 60 * 60 * 1000,
-  batchSize: 15,
+  staleAfterMs: 24 * 60 * 60 * 1000,
+  batchSize: 20,
   cooldownMs: 60 * 60 * 1000,
 };
 
