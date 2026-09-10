@@ -11,6 +11,15 @@ const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "sqlite", schema: authSchema }),
   emailAndPassword: { enabled: true },
+  socialProviders: {
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    },
+  },
+  // Google verifies the address it returns, so a Google sign-in may attach
+  // to an existing password account with the same email instead of failing.
+  account: { accountLinking: { trustedProviders: ["google"] } },
 });
 
 type Session = typeof auth.$Infer.Session;

@@ -31,6 +31,17 @@ const SignInPage = () => {
     router.refresh();
   };
 
+  const handleGoogle = async () => {
+    setError(null);
+    setIsSubmitting(true);
+    // Redirects to Google; on success better-auth lands the user on "/".
+    const result = await signIn.social({ provider: "google", callbackURL: "/" });
+    if (result.error) {
+      setIsSubmitting(false);
+      setError(result.error.message ?? "Google sign-in failed");
+    }
+  };
+
   const inputClass =
     "w-full px-4 py-2 rounded-lg border border-current default-text bg-transparent font-mono text-sm outline-none focus:opacity-100 opacity-70";
 
@@ -79,6 +90,21 @@ const SignInPage = () => {
           {isRegister ? "Sign up" : "Sign in"}
         </button>
       </form>
+
+      <div className="w-full max-w-xs flex items-center gap-3 default-text opacity-40 text-xs font-mono">
+        <span className="grow border-t border-current" />
+        or
+        <span className="grow border-t border-current" />
+      </div>
+
+      <button
+        type="button"
+        onClick={handleGoogle}
+        disabled={isSubmitting}
+        className="w-full max-w-xs px-8 py-2 rounded-lg font-mono default-text border border-current hover:opacity-70 transition-opacity disabled:opacity-40 cursor-pointer"
+      >
+        Continue with Google
+      </button>
 
       <button
         onClick={() => {
