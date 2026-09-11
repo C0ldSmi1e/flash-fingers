@@ -159,7 +159,13 @@ const MePage = () => {
     setNotice(null);
     const result = await authClient.unlinkAccount({ accountId: googleAccount.id });
     if (result.error) {
-      setError(result.error.message ?? "Could not unlink Google");
+      // better-auth refuses sensitive changes on an old session.
+      setError(
+        result.error.code === "SESSION_EXPIRED" ||
+          /not fresh/i.test(result.error.message ?? "")
+          ? "Sign in again to unlink Google"
+          : (result.error.message ?? "Could not unlink Google"),
+      );
       return;
     }
     await loadAccounts();
