@@ -56,7 +56,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center h-screen gap-6">
+    <div className="w-full flex flex-col items-center justify-center h-screen gap-6 relative">
       <h1 className="text-5xl font-mono font-bold default-text">Flash Fingers</h1>
       <p className="default-text opacity-60 text-lg">
         A minimalist typing game. How fast are your fingers?
@@ -114,6 +114,10 @@ const HomePage = () => {
             : `play ${stats.rankMinRounds - myStats.rounds} more rounds to be ranked`}
         </p>
       )}
+
+      <p className="absolute bottom-5 font-mono text-xs default-text opacity-30">
+        <Link href="/terms">terms</Link> · <Link href="/privacy">privacy</Link>
+      </p>
 
       <div className="h-6 text-sm font-mono">
         {!isPending &&

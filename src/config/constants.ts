@@ -29,3 +29,10 @@ export const stats = {
   rankMinRounds: 5,
   trendRounds: 15,
 };
+
+export const site = {
+  name: "Flash Fingers",
+  url: "https://flash-fingers.com",
+  contactEmail: "hello@flash-fingers.com",
+  policiesUpdated: "September 11, 2026",
+};

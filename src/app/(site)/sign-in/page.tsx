@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { requestPasswordReset, signIn, signUp } from "@/src/utils/auth-client";
 
@@ -148,6 +149,11 @@ const SignInPage = () => {
           </button>
         </>
       )}
+
+      <p className="font-mono text-xs default-text opacity-40 text-center max-w-xs">
+        By continuing you agree to the <Link href="/terms">terms</Link> and{" "}
+        <Link href="/privacy">privacy policy</Link>.
+      </p>
 
       <div className="flex flex-col items-center gap-2">
         <button
