@@ -11,9 +11,10 @@ const createDb = () => {
 
   const db = drizzle(env.DATABASE_PATH);
 
+  // busy_timeout first: build workers open this file concurrently.
+  db.run(sql`PRAGMA busy_timeout = 5000`);
   db.run(sql`PRAGMA journal_mode = WAL`);
   db.run(sql`PRAGMA foreign_keys = ON`);
-  db.run(sql`PRAGMA busy_timeout = 5000`);
 
   // Containers apply migrations on boot; locally use drizzle-kit.
   if (env.MIGRATE_ON_START === "1") {
