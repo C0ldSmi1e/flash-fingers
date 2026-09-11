@@ -1,6 +1,7 @@
 import "server-only";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/bun-sqlite";
+import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { env } from "@/src/server/env";
@@ -13,6 +14,11 @@ const createDb = () => {
   db.run(sql`PRAGMA journal_mode = WAL`);
   db.run(sql`PRAGMA foreign_keys = ON`);
   db.run(sql`PRAGMA busy_timeout = 5000`);
+
+  // Containers apply migrations on boot; locally use drizzle-kit.
+  if (env.MIGRATE_ON_START === "1") {
+    migrate(db, { migrationsFolder: "drizzle" });
+  }
 
   return db;
 };

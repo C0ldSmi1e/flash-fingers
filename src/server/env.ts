@@ -10,6 +10,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   EMAIL_FROM: z.string().min(1).default("noreply@flash-fingers.com"),
+  MIGRATE_ON_START: z.enum(["0", "1"]).default("0"),
 });
 
 // Empty strings (e.g. from a copied .env.example) count as unset.
