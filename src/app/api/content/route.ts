@@ -17,8 +17,7 @@ const GET = async (request: NextRequest) => {
       throw new BadRequestError(query.error.issues[0].message);
     }
 
-    const data = getRandomContent({ limit: query.data.limit });
-
+    // Scheduled before the read so an empty pool still triggers a top-up.
     after(async () => {
       try {
         await topUpContent();
@@ -27,6 +26,7 @@ const GET = async (request: NextRequest) => {
       }
     });
 
+    const data = getRandomContent({ limit: query.data.limit });
     return NextResponse.json(createSuccessResponse({ data }), { status: 200 });
   } catch (error) {
     return errorToResponse(error);
