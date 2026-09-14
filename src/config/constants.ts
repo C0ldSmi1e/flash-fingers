@@ -35,4 +35,7 @@ export const site = {
   url: "https://flash-fingers.com",
   contactEmail: "hello@flash-fingers.com",
   policiesUpdated: "September 11, 2026",
+  tagline: "A minimalist typing game. How fast are your fingers?",
+  description:
+    "Free, minimalist typing test. Race a ghost cursor set to your own average, track your words per minute, and climb the leaderboard. No ads, no sign-up needed to play.",
 };

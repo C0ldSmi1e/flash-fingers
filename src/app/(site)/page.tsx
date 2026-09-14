@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/src/utils/api";
-import { stats } from "@/src/config/constants";
+import { site, stats } from "@/src/config/constants";
 import { RankEntry, UserStats } from "@/src/schemas/stats";
 import { useSession, signOut } from "@/src/utils/auth-client";
 
@@ -58,9 +58,13 @@ const HomePage = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center h-screen gap-6 relative">
       <h1 className="text-5xl font-mono font-bold default-text">Flash Fingers</h1>
-      <p className="default-text opacity-60 text-lg">
-        A minimalist typing game. How fast are your fingers?
-      </p>
+      <p className="default-text opacity-60 text-lg">{site.tagline}</p>
+      <ul className="font-mono text-xs default-text opacity-40 flex flex-wrap justify-center gap-x-5 gap-y-1 px-6 text-center">
+        <li>free, no ads</li>
+        <li>short rounds, fresh sentences daily</li>
+        <li>race a ghost set to your own average</li>
+        <li>sign in to save rounds and get ranked</li>
+      </ul>
       <Link
         href="/play"
         className="mt-4 px-8 py-3 rounded-lg font-mono text-lg correct-text border border-current hover:opacity-70 transition-opacity"

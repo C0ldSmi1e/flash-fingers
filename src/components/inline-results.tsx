@@ -2,6 +2,7 @@
 
 import { Performance } from "@/src/schemas/performance";
 import { ConfettiRain } from "@/src/components/confetti-rain";
+import { ShareResult } from "@/src/components/share-result";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -58,7 +59,11 @@ const InlineResults = ({
           </>
         )}
 
-        <p className="default-text text-sm mt-4 animate-pulse opacity-60">
+        <div className="mt-4">
+          <ShareResult performance={performance} isPersonalBest={isPersonalBest} />
+        </div>
+
+        <p className="default-text text-sm mt-3 animate-pulse opacity-60">
           press any key to continue
         </p>
       </div>
