@@ -9,6 +9,7 @@ import type {
   UserRecord,
 } from "@/src/schemas/record";
 import { BadRequestError, NotFoundError } from "@/src/server/errors";
+import { computeAccuracy, computeWpm } from "@/src/lib/score";
 
 // A round only completes fully correct, so correct chars = content length.
 // Duration comes from the client's start/end pair (skew cancels within the
@@ -39,9 +40,8 @@ const createRecord = (
     throw new BadRequestError("typedCount is lower than the content length");
   }
 
-  const totalTime = (endedAt - startedAt) / 1000;
-  const wpm = Math.round(charCount / 5 / (totalTime / 60));
-  const accuracy = Math.round((charCount / typedCount) * 100);
+  const wpm = computeWpm({ charCount, startedAt, endedAt });
+  const accuracy = computeAccuracy({ charCount, typedCount });
 
   if (wpm > recordLimits.maxWpm) {
     throw new BadRequestError("Implausible result");

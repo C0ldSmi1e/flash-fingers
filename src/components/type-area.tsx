@@ -7,6 +7,7 @@ import { Performance } from "@/src/schemas/performance";
 import { TypingText } from "@/src/components/typing-text";
 import { InlineResults } from "@/src/components/inline-results";
 import { TypingInput } from "@/src/components/typing-input";
+import { computeAccuracy, computeWpm } from "@/src/lib/score";
 
 interface TypeAreaProps {
   round: Round;
@@ -103,27 +104,19 @@ const TypeArea = ({
     round.content.text.length,
   ]);
 
-  const calculatePerformance = (
-    typedText: string,
-    totalTypedCount: number,
-  ): Performance => {
+  // Only called once the full text matches, so correct chars = charCount.
+  const calculatePerformance = (typedCount: number): Performance => {
     const endedAt = Date.now();
     const startedAt = typingStartTime?.getTime() ?? endedAt;
-    const totalTime = (endedAt - startedAt) / 1000;
-    const correctChars = round.content.text
-      .split("")
-      .filter((char, index) => char === typedText[index]).length;
-    const accuracy =
-      totalTypedCount > 0 ? Math.round((correctChars / totalTypedCount) * 100) : 0;
-    const wpm = totalTime > 0 ? Math.round((correctChars / 5 / totalTime) * 60) : 0;
+    const { charCount } = round.content;
 
     return {
-      typedCount: totalTypedCount,
+      typedCount,
       startedAt,
       endedAt,
-      totalTime,
-      wpm,
-      accuracy,
+      totalTime: (endedAt - startedAt) / 1000,
+      wpm: computeWpm({ charCount, startedAt, endedAt }),
+      accuracy: computeAccuracy({ charCount, typedCount }),
     };
   };
 
@@ -144,7 +137,7 @@ const TypeArea = ({
         resetTypingState();
         const newTypedCount =
           lengthDiff === 1 ? input.typedCount + 1 : input.typedCount;
-        const finalPerformance = calculatePerformance(newText, newTypedCount);
+        const finalPerformance = calculatePerformance(newTypedCount);
         onCompletion(finalPerformance);
       }
     }
