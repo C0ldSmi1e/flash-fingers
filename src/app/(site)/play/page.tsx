@@ -148,7 +148,7 @@ const PlayPage = () => {
         round={currentRound}
         input={input}
         setInput={setInput}
-        targetWpm={avgWpm}
+        targetWpm={avgWpm || stats.defaultTargetWpm}
         isPersonalBest={isPersonalBest}
         vsAvg={vsAvg}
         showSignUp={showSignUp}

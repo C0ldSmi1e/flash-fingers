@@ -28,6 +28,8 @@ export const stats = {
   window: 10,
   rankMinRounds: 5,
   trendRounds: 15,
+  // Ghost pace for players with no average yet, roughly a typical typist.
+  defaultTargetWpm: 40,
 };
 
 export const site = {
