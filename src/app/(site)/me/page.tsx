@@ -11,7 +11,7 @@ import { StandardResponse } from "@/src/schemas/standard-response";
 import { TrendLine } from "@/src/components/trend-line";
 import { authClient, useSession, signOut } from "@/src/utils/auth-client";
 
-type AccountMode = null | "rename" | "password" | "email";
+type AccountMode = null | "rename" | "email";
 
 // Shape of one row from authClient.listAccounts(); id is what unlink takes.
 type LinkedAccount = { id: string; providerId: string };
@@ -38,8 +38,6 @@ const MePage = () => {
   const [name, setName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,18 +107,6 @@ const MePage = () => {
     }
     setMode(null);
     setNotice("Renamed");
-  };
-
-  const handleChangePassword = async () => {
-    const result = await authClient.changePassword({ currentPassword, newPassword });
-    if (result.error) {
-      setError(result.error.message ?? "Could not change password");
-      return;
-    }
-    setCurrentPassword("");
-    setNewPassword("");
-    setMode(null);
-    setNotice("Password changed");
   };
 
   const handleChangeEmail = async () => {
@@ -288,9 +274,6 @@ const MePage = () => {
           <button onClick={() => openMode("email")} className={linkClass}>
             change email
           </button>
-          <button onClick={() => openMode("password")} className={linkClass}>
-            change password
-          </button>
           <button
             onClick={googleAccount ? handleUnlinkGoogle : handleLinkGoogle}
             className={linkClass}
@@ -339,39 +322,6 @@ const MePage = () => {
             />
             <button onClick={handleRename} className={`correct-text ${linkClass}`}>
               save
-            </button>
-            <button
-              onClick={() => setMode(null)}
-              className={`opacity-45 ${linkClass}`}
-            >
-              cancel
-            </button>
-          </div>
-        )}
-
-        {mode === "password" && (
-          <div className="flex flex-wrap items-baseline justify-center gap-3">
-            <input
-              className={fieldClass}
-              type="password"
-              placeholder="current password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              autoFocus
-            />
-            <input
-              className={fieldClass}
-              type="password"
-              placeholder="new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              minLength={8}
-            />
-            <button
-              onClick={handleChangePassword}
-              className={`correct-text ${linkClass}`}
-            >
-              change
             </button>
             <button
               onClick={() => setMode(null)}

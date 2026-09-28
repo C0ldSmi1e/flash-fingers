@@ -19,8 +19,8 @@ const TermsPage = () => {
           and appear on the leaderboard.
         </li>
         <li>
-          You&apos;re responsible for keeping your password safe and for anything
-          done with your account.
+          Sign-in codes go to your email, so keep that inbox secure. You&apos;re
+          responsible for anything done with your account.
         </li>
         <li>
           One person, one account. Don&apos;t impersonate others or pick a display

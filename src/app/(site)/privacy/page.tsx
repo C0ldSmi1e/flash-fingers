@@ -26,7 +26,8 @@ const PrivacyPage = () => {
           email and profile picture URL. We never see your Google password.
         </li>
         <li>
-          <strong>Password</strong> — stored hashed, never in plain text.
+          <strong>Sign-in codes</strong> — a one-time code we email you each time you
+          sign in. It works once and expires within minutes.
         </li>
         <li>
           <strong>Typing results</strong> — for each completed round: words per
@@ -48,9 +49,8 @@ const PrivacyPage = () => {
 
       <h2>Email</h2>
       <p>
-        We only email you for account reasons: verifying your address, resetting your
-        password, or confirming an email change. Delivery is handled by Resend. No
-        newsletters.
+        We only email you for account reasons: sign-in codes and confirming an email
+        change. Delivery is handled by Resend. No newsletters.
       </p>
 
       <h2>Third parties</h2>

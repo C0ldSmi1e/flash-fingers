@@ -1,6 +1,7 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { emailOTP } from "better-auth/plugins";
 import { headers } from "next/headers";
 import { db } from "@/src/server/db";
 import * as authSchema from "@/src/server/db/auth-schema";
@@ -8,30 +9,38 @@ import { env } from "@/src/server/env";
 import { sendEmail } from "@/src/server/email";
 import { AuthenticationError } from "@/src/server/errors";
 
+const CODE_TTL_MINUTES = 10;
+
+// No passwords: an email code or Google signs you in, creating the account
+// on first use.
 const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "sqlite", schema: authSchema }),
-  emailAndPassword: {
-    enabled: true,
-    sendResetPassword: async ({ user, url }) => {
-      await sendEmail({
-        to: user.email,
-        subject: "Reset your Flash Fingers password",
-        text: [
-          `Hi ${user.name},`,
-          "",
-          "Someone asked to reset the password for this address. If it was you, open the link below within the hour:",
-          url,
-          "",
-          "If it wasn't you, ignore this email and your password stays the same.",
-        ].join("\n"),
-      });
-    },
-  },
-  // Sent on sign-up and again when an address is changed (user.email is the
-  // new address then). Verification is never required to play.
+  plugins: [
+    emailOTP({
+      expiresIn: CODE_TTL_MINUTES * 60,
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        // Only sign-in codes are used; the plugin's other flows stay silent.
+        if (type !== "sign-in") {
+          return;
+        }
+        await sendEmail({
+          to: email,
+          subject: `${otp} is your Flash Fingers code`,
+          text: [
+            `Your Flash Fingers sign-in code is ${otp}`,
+            "",
+            `Type it on the sign-in page within ${CODE_TTL_MINUTES} minutes.`,
+            "",
+            "If you didn't ask for it, you can ignore this email.",
+          ].join("\n"),
+        });
+      },
+    }),
+  ],
+  // Used by change email: the link goes to the new address, and the email
+  // only changes once it's clicked.
   emailVerification: {
-    sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
@@ -47,8 +56,6 @@ const auth = betterAuth({
       });
     },
   },
-  // The verification link goes to the new address via sendVerificationEmail
-  // above; the email only changes once it's clicked.
   user: { changeEmail: { enabled: true } },
   socialProviders: {
     google: {
@@ -56,9 +63,12 @@ const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-  // Google verifies the address it returns, so a Google sign-in may attach
-  // to an existing password account with the same email instead of failing.
-  account: { accountLinking: { trustedProviders: ["google"] } },
+  // Google verifies the address it returns, so it may attach to an existing
+  // account with the same email. Email codes always work, so unlinking Google
+  // can't lock anyone out.
+  account: {
+    accountLinking: { trustedProviders: ["google"], allowUnlinkingAll: true },
+  },
 });
 
 type Session = typeof auth.$Infer.Session;

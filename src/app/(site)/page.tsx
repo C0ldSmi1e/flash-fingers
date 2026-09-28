@@ -122,10 +122,10 @@ const HomePage = () => {
           (session ? (
             <div className="flex items-center gap-3">
               <Link
-                href="/me"
+                href={session.user.name.trim() ? "/me" : "/sign-in"}
                 className="correct-text hover:opacity-70 transition-opacity"
               >
-                {session.user.name}
+                {session.user.name.trim() || "pick a name"}
               </Link>
               <button
                 onClick={() => signOut()}

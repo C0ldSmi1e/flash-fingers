@@ -8,7 +8,7 @@ minute. Sign in to save rounds, track your trend, and appear on the leaderboard.
 
 - Next.js (App Router) on Bun, React, Tailwind
 - SQLite via Drizzle (`bun-sqlite` driver), migrations in `drizzle/`
-- better-auth (email/password + Google), Resend for email
+- better-auth (email sign-in codes + Google, no passwords), Resend for email
 - Vercel AI SDK + OpenAI to top up the sentence pool from daily Wikipedia items
 
 ## Develop
