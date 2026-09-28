@@ -113,6 +113,15 @@ const HomePage = () => {
         </p>
       )}
 
+      {!isPending && !session && (
+        <Link
+          href="/sign-in"
+          className="font-mono text-xs default-text opacity-50 -mt-3 hover:opacity-100 transition-opacity"
+        >
+          sign up to join the leaderboard
+        </Link>
+      )}
+
       <p className="absolute bottom-5 font-mono text-xs default-text opacity-30">
         <Link href="/terms">terms</Link> · <Link href="/privacy">privacy</Link>
       </p>

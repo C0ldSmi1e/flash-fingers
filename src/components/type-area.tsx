@@ -16,6 +16,7 @@ interface TypeAreaProps {
   targetWpm: number;
   isPersonalBest: boolean;
   vsAvg: number | null;
+  showSignUp: boolean;
   onCompletion: (performance: Performance) => void;
   onRestart: () => void;
 }
@@ -27,6 +28,7 @@ const TypeArea = ({
   targetWpm,
   isPersonalBest,
   vsAvg,
+  showSignUp,
   onCompletion,
   onRestart,
 }: TypeAreaProps) => {
@@ -182,6 +184,7 @@ const TypeArea = ({
           performance={round.performance}
           isPersonalBest={isPersonalBest}
           vsAvg={vsAvg}
+          showSignUp={showSignUp}
         />
       )}
     </div>

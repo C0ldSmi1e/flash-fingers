@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Performance } from "@/src/schemas/performance";
 import { ConfettiRain } from "@/src/components/confetti-rain";
 import { ShareResult } from "@/src/components/share-result";
@@ -8,12 +9,14 @@ interface InlineResultsProps {
   performance: Performance;
   isPersonalBest: boolean;
   vsAvg: number | null;
+  showSignUp: boolean;
 }
 
 const InlineResults = ({
   performance,
   isPersonalBest,
   vsAvg,
+  showSignUp,
 }: InlineResultsProps) => {
   // Two tiers: beating your average is the everyday win, a personal best is rarer.
   const beatAvg = !isPersonalBest && vsAvg !== null && vsAvg > 0;
@@ -62,6 +65,18 @@ const InlineResults = ({
         <div className="mt-4">
           <ShareResult performance={performance} isPersonalBest={isPersonalBest} />
         </div>
+
+        {/* Click-only: any key starts the next round. */}
+        {showSignUp && (
+          <div className="mt-2">
+            <Link
+              href="/sign-in"
+              className="text-xs font-mono default-text opacity-50 hover:opacity-100 transition-opacity underline underline-offset-4"
+            >
+              sign up to save your rounds and join the leaderboard
+            </Link>
+          </div>
+        )}
 
         <p className="default-text text-sm mt-3 animate-pulse opacity-60">
           press any key to continue

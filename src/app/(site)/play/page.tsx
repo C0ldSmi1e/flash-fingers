@@ -133,6 +133,9 @@ const PlayPage = () => {
     return <div>No game found</div>;
   }
 
+  // Guests only, from their second round; round one is for learning the game.
+  const showSignUp = !session && recentWpms.length >= 2;
+
   return (
     <div className="w-full flex flex-col items-center justify-center h-screen relative">
       <Link
@@ -148,6 +151,7 @@ const PlayPage = () => {
         targetWpm={avgWpm}
         isPersonalBest={isPersonalBest}
         vsAvg={vsAvg}
+        showSignUp={showSignUp}
         onCompletion={handleCompletion}
         onRestart={handleRestart}
       />
