@@ -1,8 +1,7 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/src/config/constants";
 
-// Link preview for every page: shared results, the home page, and the
-// leaderboard all land people here, so the card sells the game itself.
+// Link preview for every page, so the card sells the game itself.
 export const alt = `${site.name} — free typing test`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

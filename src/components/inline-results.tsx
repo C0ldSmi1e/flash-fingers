@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Performance } from "@/src/schemas/performance";
 import { ConfettiRain } from "@/src/components/confetti-rain";
-import { ShareResult } from "@/src/components/share-result";
 
 interface InlineResultsProps {
   performance: Performance;
@@ -62,13 +61,9 @@ const InlineResults = ({
           </>
         )}
 
-        <div className="mt-4">
-          <ShareResult performance={performance} isPersonalBest={isPersonalBest} />
-        </div>
-
         {/* Click-only: any key starts the next round. */}
         {showSignUp && (
-          <div className="mt-2">
+          <div className="mt-4">
             <Link
               href="/sign-in"
               className="text-xs font-mono default-text opacity-50 hover:opacity-100 transition-opacity underline underline-offset-4"
